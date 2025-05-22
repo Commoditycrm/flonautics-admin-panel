@@ -1,19 +1,24 @@
 "use client";
 import React, { useState } from "react";
 import { Col, Form, Row } from "antd";
+import { FirebaseError } from "firebase/app";
+import firebaseAuth from "@/firebaseConfig";
+import { useRouter } from "next/navigation";
 
 import CustomInput from "../hoc/CustomInputs/CustomInput";
 import CustomButton from "../hoc/CustomButton/CustomButton";
 import { getInputRegex } from "../data/helpers/getInputRegex";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import firebaseAuth from "@/firebaseConfig";
 import { setCookie } from "../data/helpers/authCookies";
-import { FirebaseError } from "firebase/app";
 
 const Login = () => {
-  const regex = getInputRegex("email");
-  const [form] = Form.useForm();
+  const [formValues, setFormValues] = useState({ email: "", password: "" })
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [form] = Form.useForm();
+
+  const router = useRouter()
+  const regex = getInputRegex("email");
 
   const handleFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
@@ -31,6 +36,7 @@ const Login = () => {
         secure: true,
         sameSite: "Strict",
       });
+      router.push("/organizations");
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {
         const errorCode = error.code;
@@ -69,6 +75,8 @@ const Login = () => {
               <CustomInput
                 name={"email"}
                 placeholder={"Enter your email"}
+                value={formValues.email}
+                onChange={(e) => setFormValues({ ...formValues, email: e.target.value })}
                 rules={[
                   { required: true, message: `Email is required` },
                   { pattern: regex?.pattern, message: regex?.message },
@@ -79,6 +87,8 @@ const Login = () => {
             <Col span={24}>
               <CustomInput
                 name={"password"}
+                value={formValues.password}
+                onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
                 type="password"
                 placeholder={"Enter your password"}
                 rules={[{ required: true, message: "Password is required" }]}
@@ -89,7 +99,7 @@ const Login = () => {
               <CustomButton
                 value={"Login"}
                 type={"primary"}
-                onClick={() => {}}
+                onClick={() => { }}
                 htmlType="submit"
                 loading={loading}
                 disabled={loading}

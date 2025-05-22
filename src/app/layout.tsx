@@ -18,7 +18,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   const pathname = usePathname()
 
-  // If on home route (/), render "Hello" only
   if (pathname === '/') {
     return (
       <html lang="en">
@@ -42,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <Sidebar />
             </Sider>
 
-            <Content className='p-[22px] bg-amber-200'>{children}</Content>
+            <Content className='p-[22px]'>{children}</Content>
           </Layout>
         </Layout>
       </body>
