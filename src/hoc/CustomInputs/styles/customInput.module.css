@@ -1,0 +1,34 @@
+.inputContainer {
+    position: relative;
+    width: 100%;
+}
+
+.floatingLabel {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #aaa;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: white;
+    padding: 0 5px;
+}
+
+.focused .floatingLabel {
+    top: 0px;
+    font-size: 11px;
+}
+
+.customInput {
+    width: 100%;
+    font-size: 13px;
+    border-radius: 4px;
+    height: 32px;
+}
+
+/* Ensure label stays on top of border */
+.inputContainer .floatingLabel {
+    z-index: 1;
+}
