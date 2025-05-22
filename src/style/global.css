@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+.ant-layout-header {
+    background-color: white !important;
+    padding: 0px !important;
+    border-bottom: 1px solid rgb(240, 240, 240);
+}
+
+.ant-layout-content {
+    background-color: white !important;
+}
+
+.ant-layout-sider {
+    background-color: white !important;
+}
+
+.ant-menu-light{
+    height: 100% !important;
+}
+
+/* Table */
+.ant-table-measure-row {
+    display: none !important;
+}
+
+.ant-table-wrapper .ant-table-thead>tr>th {
+    font-size: 14px;
+    padding: 10px 8px;
+    background-color: white;
+    border-radius: 0px !important;
+}
+
+.ant-table-wrapper .ant-table-tbody>tr>td {
+    font-size: 14px;
+    padding: 0px 8px;
+    height: 50px !important;
+    cursor: pointer;
+}
+
+.ant-pagination-simple-pager input {
+    pointer-events: none;
+    cursor: not-allowed;
+}
