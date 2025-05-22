@@ -1,50 +1,52 @@
-"use client"
+"use client";
 
-import 'antd/dist/reset.css' // Ant Design v5+ reset styles
-import '../style/global.css'
+import "antd/dist/reset.css"; // Ant Design v5+ reset styles
+import "../style/global.css";
 
-import { ReactNode } from 'react'
-import { Layout } from 'antd'
-import { usePathname } from 'next/navigation'
+import { ReactNode } from "react";
+import { Layout } from "antd";
+import { usePathname } from "next/navigation";
 
-import Login from '../components/Login'
-import Navbar from '../components/Navbar'
-import Sidebar from '../components/Sidebar'
-
+import Login from "../components/Login";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import { ApolloProvider } from "@apollo/client";
+import client from "@/apolloClient";
 
 const { Header, Sider, Content } = Layout;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
 
-  const pathname = usePathname()
-
-  if (pathname === '/') {
+  if (pathname === "/") {
     return (
       <html lang="en">
         <body>
           <Login />
         </body>
       </html>
-    )
+    );
   }
 
   return (
-    <html lang="en">
-      <body>
-        <Layout className='h-[100vh]'>
-          <Header>
-            <Navbar />
-          </Header>
+    <ApolloProvider client={client}>
+      <html lang="en">
+        <body>
+          <Layout className="h-[100vh]">
+            <Header>
+              <Navbar />
+            </Header>
 
-          <Layout>
-            <Sider width={240}>
-              <Sidebar />
-            </Sider>
+            <Layout>
+              <Sider width={240}>
+                <Sidebar />
+              </Sider>
 
-            <Content className='p-[22px]'>{children}</Content>
+              <Content className="p-[22px]">{children}</Content>
+            </Layout>
           </Layout>
-        </Layout>
-      </body>
-    </html>
-  )
+        </body>
+      </html>
+    </ApolloProvider>
+  );
 }
