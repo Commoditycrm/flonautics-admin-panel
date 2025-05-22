@@ -3,7 +3,7 @@
 .ant-layout-header {
     background-color: white !important;
     padding: 0px !important;
-    border-bottom: 1px solid rgb(240, 240, 240);
+    border-bottom: 1px solid rgb(233, 233, 233);
 }
 
 .ant-layout-content {
@@ -12,6 +12,16 @@
 
 .ant-layout-sider {
     background-color: white !important;
+}
+
+.ant-menu-inline .ant-menu-item {
+    height: 34px !important;
+    padding-left: 16px !important;
+    border-radius: 4px !important;
+}
+
+.ant-menu-light.ant-menu-root.ant-menu-inline{
+    border-inline-end: 1px solid rgb(233, 233, 233);
 }
 
 .ant-menu-light{

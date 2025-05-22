@@ -104,7 +104,7 @@ import { ICustomTable } from "@/src/data/types";
     scroll = false,
     pageSize = 10,
     footer,
-    // onRowClick,
+    onRowClick,
   }) => {
     const [dragIndex, setDragIndex] = useState<DragIndexState>({
       active: -1,
@@ -325,7 +325,7 @@ import { ICustomTable } from "@/src/data/types";
                 total: totalCount,
                 size: "small",
               }}
-            //   onRow={(record) => ({ onClick: () => onRowClick(record) })}
+              onRow={(record) => ({ onClick: () => onRowClick(record) })}
               onChange={onPageChange}
             //   {...(isRowExpandable && {
             //     expandable: {
@@ -367,7 +367,7 @@ import { ICustomTable } from "@/src/data/types";
           total: totalCount,
           size: "small",
         }}
-        // onRow={(record) => ({ onClick: () => onRowClick(record) })}
+        onRow={(record) => ({ onClick: () => onRowClick(record) })}
         onChange={onPageChange}
         // {...(isRowExpandable && {
         //   expandable: {

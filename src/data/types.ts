@@ -1,5 +1,7 @@
 import { TableColumnsType } from "antd";
+import { AnyObject } from "antd/es/_util/type";
 import { Rule } from "antd/es/form";
+import { ChangeEvent } from "react";
 
 export type ICustomInput = {
   name: string;
@@ -8,7 +10,7 @@ export type ICustomInput = {
   rules?: Rule[];
   required?: boolean;
   type?: string;
-  onChange?: (e: unknown) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export type ICustomButton = {
@@ -35,5 +37,5 @@ export type ICustomTable = {
   scroll?: boolean;
   footer?: React.ReactNode;
   pageSize?: number;
-  onRowClick: (record: never) => void;
+  onRowClick: (record: AnyObject) => void;
 };
