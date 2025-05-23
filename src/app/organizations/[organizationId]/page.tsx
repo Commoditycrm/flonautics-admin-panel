@@ -1,13 +1,18 @@
-import React from 'react'
+import React from "react";
 
-import OrganizationDetails from '@/src/components/Organizations/OrganizationDetails'
+import OrganizationDetails from "@/src/components/Organizations/OrganizationDetails";
 
-const OrganizationDetailPage = () => {
-    return (
-        <div>
-            <OrganizationDetails/>
-        </div>
-    )
+async function OrganizationDetailPage({
+  params,
+}: {
+  params: { organizationId: string };
+}) {
+  const { organizationId } = await params;
+  return (
+    <div>
+      <OrganizationDetails orgId={organizationId} />
+    </div>
+  );
 }
 
-export default OrganizationDetailPage
+export default OrganizationDetailPage;

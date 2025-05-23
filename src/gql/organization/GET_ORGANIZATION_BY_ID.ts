@@ -1,14 +1,14 @@
 import { gql } from "@apollo/client";
 
-export const GET_ORGANIZATIONS = gql`
-  query Organizations($options: OrganizationOptions) {
-    organizations(options: $options) {
+export const GET_ORGANIZATION_BY_ID = gql`
+  query getOrganizationById($where: OrganizationWhere) {
+    organizations(where: $where) {
       id
       name
       createdAt
       createdBy {
-        name
         email
+        name
       }
       memberUsersConnection {
         totalCount
@@ -16,9 +16,6 @@ export const GET_ORGANIZATIONS = gql`
       projectsConnection {
         totalCount
       }
-    }
-    organizationsConnection {
-      totalCount
     }
   }
 `;
