@@ -17,5 +17,8 @@ export const GET_ORGANIZATIONS = gql`
         totalCount
       }
     }
+    organizationsConnection {
+      totalCount
+    }
   }
 `;

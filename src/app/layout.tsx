@@ -5,9 +5,6 @@ import "../style/global.css";
 
 import { ReactNode } from "react";
 import { Layout } from "antd";
-import { usePathname } from "next/navigation";
-
-import Login from "../components/Login";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { ApolloProvider } from "@apollo/client";
@@ -16,17 +13,8 @@ import client from "@/apolloClient";
 const { Header, Sider, Content } = Layout;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
 
-  if (pathname === "/") {
-    return (
-      <html lang="en">
-        <body>
-          <Login />
-        </body>
-      </html>
-    );
-  }
+  
 
   return (
     <ApolloProvider client={client}>

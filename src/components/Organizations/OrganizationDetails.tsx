@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "antd";
 import { useQuery } from "@apollo/client";
 import { GET_ORGANIZATION_BY_ID } from "@/src/gql";
+import { Organization } from "flonautics-project-types";
 
 const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
-  const [orgDetail, setOrgDetail] = useState([]);
+  const [orgDetail, setOrgDetail] = useState<Organization[]>([]);
   const { data, loading, error } = useQuery(GET_ORGANIZATION_BY_ID, {
     variables: {
       where: {

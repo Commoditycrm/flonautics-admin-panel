@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useRouter } from "next/navigation";
+import { Organization } from "flonautics-project-types";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { useQuery } from "@apollo/client";
 import { GET_ORGANIZATIONS } from "@/src/gql";
 const Organizations = () => {
   const router = useRouter();
-  const [organizations, setOrganizations] = useState([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const columns = [
     {
@@ -54,8 +56,8 @@ const Organizations = () => {
 
   useEffect(() => {
     if (data && data?.organizations?.length) {
-      console.log(data);
       setOrganizations(data.organizations);
+      setTotalCount(data?.organizationsConnection.totalCount);
     }
   }, [data]);
 
@@ -69,6 +71,7 @@ const Organizations = () => {
             dataSource={organizations}
             columns={columns}
             rowKey={"key"}
+            pageSize={totalCount}
             onRowClick={(record) => router.push(`/organizations/${record.id}`)}
           />
         </Col>
