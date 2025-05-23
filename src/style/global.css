@@ -51,3 +51,7 @@
     pointer-events: none;
     cursor: not-allowed;
 }
+
+.ant-divider-horizontal{
+    margin: 0px !important;
+}

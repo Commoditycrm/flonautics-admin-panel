@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@apollo/client";
 import { Organization } from "flonautics-project-types";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
-import { useQuery } from "@apollo/client";
 import { GET_ORGANIZATIONS } from "@/src/gql";
+import { displayDate } from "@/src/data/helpers/displayDate";
+
 const Organizations = () => {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -20,23 +22,27 @@ const Organizations = () => {
     },
     {
       title: "Created By",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "createdBy",
+      key: "createdBy",
+      render: (createdBy: { name: string }) => createdBy?.name,
     },
     {
       title: "Created On",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (createdAt: string) => displayDate(createdAt),
     },
     {
       title: "Total Users",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "memberUsersConnection",
+      key: "memberUsersConnection",
+      render: (memberUsersConnection: { totalCount: number }) => memberUsersConnection?.totalCount,
     },
     {
       title: "Total Projects",
-      dataIndex: "address",
-      key: "address",
+      dataIndex: "projectsConnection",
+      key: "projectsConnection",
+      render: (projectsConnection: { totalCount: number }) => projectsConnection?.totalCount,
     },
   ];
 
@@ -53,6 +59,8 @@ const Organizations = () => {
       },
     },
   });
+
+  console.log(data, "data")
 
   useEffect(() => {
     if (data && data?.organizations?.length) {

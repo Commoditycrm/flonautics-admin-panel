@@ -5,16 +5,15 @@ import "../style/global.css";
 
 import { ReactNode } from "react";
 import { Layout } from "antd";
+import { ApolloProvider } from "@apollo/client";
+
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { ApolloProvider } from "@apollo/client";
 import client from "@/apolloClient";
 
 const { Header, Sider, Content } = Layout;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-
-  
 
   return (
     <ApolloProvider client={client}>
