@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 import React, { useEffect, useState } from "react";
 import { Row, Col, Space } from "antd";
 import { useQuery } from "@apollo/client";
 import { GET_ORGANIZATION_BY_ID } from "@/src/gql";
-import { Organization } from "flonautics-project-types";
 import { displayDate } from "@/src/data/helpers/displayDate";
-
 const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
-  const [orgDetail, setOrgDetail] = useState<Organization[]>([]);
-  const [cards, setCards] = useState<Array<{ title: string; description: number }>>([]);
+  const [orgDetail, setOrgDetail] = useState([]);
+  const [cards, setCards] = useState<
+    Array<{ title: string; description: number }>
+  >([]);
 
   const { data, loading, error } = useQuery(GET_ORGANIZATION_BY_ID, {
     variables: {
@@ -23,10 +24,17 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
     if (data && data.organizations.length) {
       setOrgDetail(data?.organizations);
       const cardsData = [
-        { title: "Total Users", description: data?.organizations[0]?.memberUsersConnection?.totalCount },
-        { title: "Total Projects", description: data?.organizations[0]?.projectsConnection?.totalCount },
-      ]
-      setCards(cardsData)
+        {
+          title: "Total Users",
+          description:
+            data?.organizations[0]?.memberUsersConnection?.totalCount,
+        },
+        {
+          title: "Total Projects",
+          description: data?.organizations[0]?.projectsConnection?.totalCount,
+        },
+      ];
+      setCards(cardsData);
     }
   }, [data]);
 
@@ -39,8 +47,24 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
       <Row gutter={[0, 25]}>
         <Col span={24}>
           <Space direction="vertical" size={0}>
-            <span className="text-lg"> {orgDetail[0]?.name} </span>
-            <span className="text-gray-400">Created By {orgDetail[0]?.createdBy?.name} On {displayDate(orgDetail[0]?.createdAt)}</span>
+            <span className="text-lg">
+              {
+                // @ts-ignore
+                orgDetail[0]?.name
+              }{" "}
+            </span>
+            <span className="text-gray-400">
+              Created By{" "}
+              {
+                // @ts-ignore
+                orgDetail[0]?.createdBy?.name
+              }{" "}
+              On{" "}
+              {
+                // @ts-ignore
+                displayDate(orgDetail[0]?.createdAt)
+              }
+            </span>
           </Space>
         </Col>
 

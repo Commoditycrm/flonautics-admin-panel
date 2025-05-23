@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import { Organization } from "flonautics-project-types";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { GET_ORGANIZATIONS } from "@/src/gql";
@@ -11,7 +10,7 @@ import { displayDate } from "@/src/data/helpers/displayDate";
 
 const Organizations = () => {
   const router = useRouter();
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
   const columns = [
@@ -53,14 +52,13 @@ const Organizations = () => {
         offset: 0,
         sort: [
           {
-            createdAt: "DESC",
+            createdAt:"DESC",
           },
         ],
       },
     },
   });
 
-  console.log(data, "data")
 
   useEffect(() => {
     if (data && data?.organizations?.length) {

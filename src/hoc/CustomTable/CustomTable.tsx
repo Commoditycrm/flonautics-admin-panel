@@ -24,16 +24,9 @@ import React, {
     useSortable,
   } from "@dnd-kit/sortable";
   
-//   import AlphabetAvatar from "../CustomAvatar/AlphabetAvatar";
-//   import { useLazyQuery } from "@apollo/client";
-//   import { GET_COMMENTS_BY_ITEM } from "@/gql";
-//   import { BacklogItem, Comment } from "@/@types/ogm.types";
-//   import extractContent from "./utils/extractContent";
-//   import { displayDate } from "@/components/Comments/utils/dateUtils";
 import { BodyCellProps, DragIndexState, HeaderCellProps } from "@/src/data/interfaces";
 import { ICustomTable } from "@/src/data/types";
   
-//   const { Text, Link } = Typography;
   
   const DragIndexContext = createContext<DragIndexState>({
     active: -1,
