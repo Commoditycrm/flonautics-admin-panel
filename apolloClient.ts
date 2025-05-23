@@ -9,8 +9,7 @@ import { onError } from "@apollo/client/link/error";
 // import fetch from "cross-fetch";
 import { signOut } from "firebase/auth";
 import firebaseAuth from "./firebaseConfig";
-// import { auth } from "./auth";
-// import { getCookie, setCookie } from "./components/Authentication/helpers";
+import { getCookie, setCookie } from "./src/data/helpers/authCookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -26,13 +25,11 @@ const clearAllCookies = () => {
 // --- HTTP Link ---
 const httpLink = new HttpLink({
   uri: API_URL,
-  fetch,
+  // fetch,
 });
 
-// --- Auth Link ---
 const authLink = new ApolloLink((operation, forward) => {
-  //   const token = getCookie("accessToken") || getCookie("invite_token");
-  const token = "";
+  const token = getCookie("accessToken");
   operation.setContext(({ headers = {} }) => ({
     headers: {
       ...headers,
@@ -42,7 +39,6 @@ const authLink = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 
-// --- Error Link ---
 const errorLink = onError(
   ({ graphQLErrors, networkError, operation, forward }) => {
     const tokenExpired = graphQLErrors?.some(
@@ -55,10 +51,10 @@ const errorLink = onError(
         firebaseAuth.currentUser
           ?.getIdToken(true)
           .then((newToken) => {
-            //   setCookie("accessToken", newToken, 1, "/", {
-            //     secure: true,
-            //     sameSite: "Strict",
-            //   });
+            setCookie("accessToken", newToken, 1, "/", {
+              secure: true,
+              sameSite: "Strict",
+            });
 
             operation.setContext(({ headers = {} }) => ({
               headers: {
@@ -91,7 +87,6 @@ const errorLink = onError(
         });
     }
 
-    // Optional: Log other errors
     if (networkError) {
       console.error(`[Network error]: ${networkError}`);
     }
@@ -103,7 +98,6 @@ const errorLink = onError(
   }
 );
 
-// --- Apollo Client ---
 const client = new ApolloClient({
   link: ApolloLink.from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache(),
