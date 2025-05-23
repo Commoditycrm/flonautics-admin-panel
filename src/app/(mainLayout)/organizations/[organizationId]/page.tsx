@@ -1,17 +1,22 @@
 import React from "react";
 
 import OrganizationDetails from "@/src/components/Organizations/OrganizationDetails";
+import { Metadata } from "next";
 
-async function OrganizationDetailPage({
-  params,
-}: {
-  params: { organizationId: string };
-}) {
+export const metadata: Metadata = {
+  title: "Organization Detail",
+};
+
+type Props = {
+  params: Promise<{ organizationId: string }>;
+};
+
+async function OrganizationDetailPage({ params }: Props) {
   const { organizationId } = await params;
   return (
-    <div>
+    <React.Fragment>
       <OrganizationDetails orgId={organizationId} />
-    </div>
+    </React.Fragment>
   );
 }
 

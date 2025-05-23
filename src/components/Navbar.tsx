@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import firebaseAuth from "@/firebaseConfig";
 import { clearCookies } from "../data/helpers/authCookies";
 import { useRouter } from "next/navigation";
+import client from "@/apolloClient";
 
 const { Text } = Typography;
 
@@ -15,6 +16,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await signOut(firebaseAuth);
     clearCookies();
+    client.clearStore();
     router.push("/");
   };
 
