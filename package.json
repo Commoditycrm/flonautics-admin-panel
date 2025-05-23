@@ -15,6 +15,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "antd": "^5.25.2",
+    "date-fns": "^4.1.0",
     "firebase": "^11.8.0",
     "flonautics-project-types": "https://github.com/Commoditycrm/flonautics-project-types.git",
     "graphql": "^16.11.0",
