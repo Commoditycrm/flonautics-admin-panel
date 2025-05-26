@@ -1,4 +1,4 @@
-import { TableColumnsType } from "antd";
+import { TableColumnsType, TablePaginationConfig } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { Rule } from "antd/es/form";
 import { ChangeEvent } from "react";
@@ -29,7 +29,7 @@ export type ICustomTable = {
   columns: TableColumnsType;
   loading?: boolean;
   rowKey: string;
-  onPageChange?: never;
+  onPageChange?: (config: TablePaginationConfig) => void
   totalCount?: number;
   currentPage?: number;
   className?: string;
