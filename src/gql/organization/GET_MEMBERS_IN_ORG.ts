@@ -1,25 +1,20 @@
 import { gql } from "@apollo/client";
 
 export const GET_MEMBERS_IN_ORG = gql`
-  query MemberUsers(
-    $where: OrganizationWhere
+  query getMembersOfOrg(
     $options: UserOptions
-    $memberUsersWhere: UserWhere
-    $connectionWhere: OrganizationMemberUsersConnectionWhere
+    $where: UserWhere
+    $usersConnectionWhere2: UserWhere
   ) {
-    organizations(where: $where) {
+    users(options: $options, where: $where) {
       id
-      memberUsersConnection(where: $connectionWhere) {
-        totalCount
-      }
-      memberUsers(options: $options, where: $memberUsersWhere) {
-        id
-        email
-        name
-        externalId
-        role
-        createdAt
-      }
+      name
+      email
+      createdAt
+      role
+    }
+    usersConnection(where: $usersConnectionWhere2) {
+      totalCount
     }
   }
 `;
