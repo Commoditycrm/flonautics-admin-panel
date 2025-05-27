@@ -21,7 +21,7 @@ export default function MainLayout({
           <Sider width={240}>
             <Sidebar />
           </Sider>
-          <Content className="p-[22px]">{children}</Content>
+          <Content className="px-[22px] py-[16px]">{children}</Content>
         </Layout>
       </Layout>
     </ApolloProvider>

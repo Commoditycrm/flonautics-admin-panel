@@ -14,6 +14,7 @@ const CustomTable: FC<ICustomTable> = ({
   onRowClick,
   onPageChange
 }) => {
+
   return (
     <Table
       showSorterTooltip={false}
@@ -22,7 +23,6 @@ const CustomTable: FC<ICustomTable> = ({
       rowKey={rowKey}
       columns={columns}
       dataSource={dataSource}
-      {...(scroll && { scroll: { x: "max-content" } })}
       pagination={{
         simple: true,
         showSizeChanger: false,
@@ -30,8 +30,9 @@ const CustomTable: FC<ICustomTable> = ({
         total: totalCount,
         size: "small",
       }}
-      onRow={(record) => ({ onClick: () => onRowClick(record) })}
       onChange={onPageChange}
+      onRow={(record) => ({ onClick: () => onRowClick(record) })}
+      {...(scroll && { scroll: { x: "max-content" } })}
     />
   )
 }

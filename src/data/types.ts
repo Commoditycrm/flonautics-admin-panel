@@ -21,6 +21,7 @@ export type ICustomButton = {
   disabled?: boolean;
   icon?: never;
   htmlType?: "button" | "submit" | "reset";
+  color?: string
 };
 
 export type ICustomTable = {
@@ -29,7 +30,7 @@ export type ICustomTable = {
   columns: TableColumnsType;
   loading?: boolean;
   rowKey: string;
-  onPageChange?: (config: TablePaginationConfig) => void
+  onPageChange?: (config: TablePaginationConfig, filters: AnyObject) => void
   totalCount?: number;
   currentPage?: number;
   className?: string;
@@ -38,4 +39,15 @@ export type ICustomTable = {
   footer?: React.ReactNode;
   pageSize?: number;
   onRowClick: (record: AnyObject) => void;
+};
+
+export type ISummary = {
+  orgDetail: never[]
+  cards: Array<{ title: string; description: number }>
+}
+
+export type IAlphabetAvatar = {
+  name: string | undefined;
+  size: number;
+  count?: number | string;
 };

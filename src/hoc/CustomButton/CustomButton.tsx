@@ -3,7 +3,7 @@ import { Button } from "antd";
 
 import { ICustomButton } from "@/src/data/types";
 
-const CustomButton: FC<ICustomButton> = ({ value, onClick, icon, type, disabled, loading, htmlType }) => {
+const CustomButton: FC<ICustomButton> = ({ value, onClick, icon, type, disabled, loading, htmlType, color }) => {
     return (
         <Button
             id={type}
@@ -13,7 +13,7 @@ const CustomButton: FC<ICustomButton> = ({ value, onClick, icon, type, disabled,
             icon={icon}
             loading={loading}
             disabled={disabled}
-            style={{ borderRadius: "4px", fontSize: "13px", height: "32px", width:"100%" }}
+            style={{ borderRadius: "4px", fontSize: "13px", height: "32px", width: "100%", background: color || "" }}
             htmlType={htmlType}
         >
             {value}
