@@ -20,11 +20,11 @@
     border-radius: 4px !important;
 }
 
-.ant-menu-light.ant-menu-root.ant-menu-inline{
+.ant-menu-light.ant-menu-root.ant-menu-inline {
     border-inline-end: 1px solid rgb(233, 233, 233);
 }
 
-.ant-menu-light{
+.ant-menu-light {
     height: 100% !important;
 }
 
@@ -52,6 +52,17 @@
     cursor: not-allowed;
 }
 
-.ant-divider-horizontal{
+.ant-divider-horizontal {
     margin: 0px !important;
+}
+
+/* Tabs */
+.ant-tabs {
+    height: 100%;
+}
+
+.ant-tabs .ant-tabs-tab {
+    padding: 6px 0px;
+    font-size: 15px;
+    outline: none !important;
 }
