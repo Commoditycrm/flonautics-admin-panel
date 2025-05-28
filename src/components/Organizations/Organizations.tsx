@@ -106,7 +106,7 @@ const Organizations = () => {
             offset,
             sort: [
               {
-                lastModified: "ASC",
+                lastModified: "DESC",
               },
               {
                 createdAt: "DESC",
