@@ -7,7 +7,7 @@ export const GET_ORGANIZATIONS = gql`
       name
       createdAt
       deletedAt
-      updatedAt
+      lastModified
       createdBy {
         name
         email
