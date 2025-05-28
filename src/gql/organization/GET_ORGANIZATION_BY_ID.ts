@@ -6,6 +6,7 @@ export const GET_ORGANIZATION_BY_ID = gql`
       id
       name
       createdAt
+      deletedAt
       createdBy {
         email
         name

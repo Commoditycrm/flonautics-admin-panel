@@ -9,13 +9,14 @@ import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
+
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
     onError(error) {
       console.error(error);
     },
   });
 
-  const handleDeactivate = async () => {
+  const handleUpdateOrgStatus = async () => {
     try {
       await toggleOrgStatus({
         variables: {
@@ -24,7 +25,8 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
             id: orgDetail[0].id,
           },
           update: {
-            deletedAt: new Date(),
+            // @ts-ignore
+            deletedAt: orgDetail[0]?.deletedAt === null ? new Date() : null,
           },
         },
         update(cache) {
@@ -36,7 +38,8 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
             }),
             fields: {
               deletedAt() {
-                return new Date();
+                // @ts-ignore
+                return orgDetail[0]?.deletedAt === null ? new Date() : null;
               },
             },
           });
@@ -78,10 +81,12 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
             <Col>
               <Space>
                 <CustomButton
-                  value={"Deactivate"}
+                  // @ts-ignore
+                  value={orgDetail[0]?.deletedAt === null ? "Deactivate" : "Activate"}
                   type={"primary"}
-                  onClick={handleDeactivate}
-                  color="#ea354a"
+                  onClick={handleUpdateOrgStatus}
+                  // @ts-ignore
+                  color={orgDetail[0]?.deletedAt === null ? "red" : ""}
                   disabled={loading}
                   loading={loading}
                 />
