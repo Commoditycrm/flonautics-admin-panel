@@ -23,11 +23,11 @@ const Organizations = () => {
         offset: 0,
         sort: [
           {
-            lastModified: "ASC",
+            lastModified: "DESC",
           },
-          {
-            createdAt: "DESC",
-          },
+          // {
+          //   createdAt: "DESC",
+          // },
         ],
       },
     },
@@ -64,7 +64,8 @@ const Organizations = () => {
       title: "Last Updated",
       dataIndex: "lastModified",
       key: "lastModified",
-      render: (lastModified: string) => lastModified ? displayDate(lastModified) : "-",
+      render: (lastModified: string) =>
+        lastModified ? displayDate(lastModified) : "-",
     },
     {
       title: "Users",
@@ -108,9 +109,9 @@ const Organizations = () => {
               {
                 lastModified: "DESC",
               },
-              {
-                createdAt: "DESC",
-              },
+              // {
+              //   createdAt: "DESC",
+              // },
             ],
           },
         },
