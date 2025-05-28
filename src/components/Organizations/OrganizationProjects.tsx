@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
@@ -15,6 +15,8 @@ const OrganizationProjects = () => {
 
   const params = useParams();
   const orgId = params?.organizationId;
+
+  const router = useRouter()
 
   const { getColumnSearchProps } = useColumnSearch();
 
@@ -61,7 +63,10 @@ const OrganizationProjects = () => {
       title: "Description",
       dataIndex: "description",
       key: "description",
-      render: (description: string) => description || "-",
+      render: (description: string) =>
+        description?.length > 30
+          ? `${description.slice(0, 30)}...`
+          : description || "-",
     },
     {
       title: "Created By",
@@ -115,7 +120,7 @@ const OrganizationProjects = () => {
         dataSource={dataSource}
         columns={columns}
         rowKey={"id"}
-        onRowClick={() => {}}
+        onRowClick={(record) => router.push(`/organizations/${orgId}/projects/${record.id}`)}
         loading={loading || isFetchingMore}
         totalCount={totalCount}
         onPageChange={handleTableChange}

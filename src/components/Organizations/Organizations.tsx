@@ -59,16 +59,30 @@ const Organizations = () => {
       render: (createdAt: string) => displayDate(createdAt),
     },
     {
-      title: "Total Users",
+      title: "Last Updated",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (updatedAt: string) => displayDate(updatedAt),
+    },
+    {
+      title: "Users",
       dataIndex: "memberUsersConnection",
       key: "memberUsersConnection",
       render: (memberUsersConnection: { totalCount: number }) => memberUsersConnection?.totalCount,
     },
     {
-      title: "Total Projects",
+      title: "Projects",
       dataIndex: "projectsConnection",
       key: "projectsConnection",
       render: (projectsConnection: { totalCount: number }) => projectsConnection?.totalCount,
+    },
+    {
+      title: "Status",
+      dataIndex: "deletedAt",
+      key: "deletedAt",
+      render: (deletedAt: string) => (
+        deletedAt === null ? <span className="text-green-600">Active</span> : <span className="text-red-600">Inactive</span>
+      ),
     },
   ];
 
