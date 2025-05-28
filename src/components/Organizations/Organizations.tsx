@@ -8,10 +8,9 @@ import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { GET_ORGANIZATIONS } from "@/src/gql";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
-
 const Organizations = () => {
   const router = useRouter();
-  const [organizations, setOrganizations] = useState([]);
+  const [organizations, setOrganizations] = useState<[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
@@ -23,6 +22,9 @@ const Organizations = () => {
         limit: 10,
         offset: 0,
         sort: [
+          {
+            lastModified: "ASC",
+          },
           {
             createdAt: "DESC",
           },
@@ -60,29 +62,34 @@ const Organizations = () => {
     },
     {
       title: "Last Updated",
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (updatedAt: string) => displayDate(updatedAt),
+      dataIndex: "lastModified",
+      key: "lastModified",
+      render: (lastModified: string) => displayDate(lastModified),
     },
     {
       title: "Users",
       dataIndex: "memberUsersConnection",
       key: "memberUsersConnection",
-      render: (memberUsersConnection: { totalCount: number }) => memberUsersConnection?.totalCount,
+      render: (memberUsersConnection: { totalCount: number }) =>
+        memberUsersConnection?.totalCount,
     },
     {
       title: "Projects",
       dataIndex: "projectsConnection",
       key: "projectsConnection",
-      render: (projectsConnection: { totalCount: number }) => projectsConnection?.totalCount,
+      render: (projectsConnection: { totalCount: number }) =>
+        projectsConnection?.totalCount,
     },
     {
       title: "Status",
       dataIndex: "deletedAt",
       key: "deletedAt",
-      render: (deletedAt: string) => (
-        deletedAt === null ? <span className="text-green-600">Active</span> : <span className="text-red-600">Inactive</span>
-      ),
+      render: (deletedAt: string) =>
+        deletedAt === null ? (
+          <span className="text-green-600">Active</span>
+        ) : (
+          <span className="text-red-600">Inactive</span>
+        ),
     },
   ];
 
@@ -97,7 +104,14 @@ const Organizations = () => {
           options: {
             limit: pageSize,
             offset,
-            sort: [{ createdAt: "DESC" }],
+            sort: [
+              {
+                lastModified: "ASC",
+              },
+              {
+                createdAt: "DESC",
+              },
+            ],
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
