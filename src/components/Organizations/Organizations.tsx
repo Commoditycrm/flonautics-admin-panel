@@ -64,7 +64,7 @@ const Organizations = () => {
       title: "Last Updated",
       dataIndex: "lastModified",
       key: "lastModified",
-      render: (lastModified: string) => displayDate(lastModified),
+      render: (lastModified: string) => lastModified ? displayDate(lastModified) : "-",
     },
     {
       title: "Users",
@@ -106,7 +106,7 @@ const Organizations = () => {
             offset,
             sort: [
               {
-                lastModified: "ASC",
+                lastModified: "DESC",
               },
               {
                 createdAt: "DESC",
