@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   title: "Project Detail",
 };
 
-async function ProjectDetailPage({
-  params,
-}: {
-  params: { projectId: string };
-}) {
+type Props = {
+  params: Promise<{ projectId: string }>;
+};
+
+async function ProjectDetailPage({ params }: Props) {
   const { projectId } = await params;
   return <ProjectDetails projectId={projectId} />;
 }
