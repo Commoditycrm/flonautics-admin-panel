@@ -13,15 +13,15 @@ export default function MainLayout({
   const { Header, Sider, Content } = Layout;
   return (
     <ApolloProvider client={client}>
-      <Layout className="h-[100vh]">
-        <Header>
+      <Layout className="h-[100vh] overflow-hidden">
+        <Header className="h-[7.5vh]">
           <Navbar />
         </Header>
         <Layout>
           <Sider width={240}>
             <Sidebar />
           </Sider>
-          <Content className="px-[22px] py-[16px]">{children}</Content>
+          <Content className="px-[22px] py-[16px] h-[92.5vh] overflow-auto">{children}</Content>
         </Layout>
       </Layout>
     </ApolloProvider>

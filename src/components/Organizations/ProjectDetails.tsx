@@ -4,18 +4,17 @@ import { Row, Col, TablePaginationConfig } from "antd";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import {
-  GET_ITEM_COUNT_BY_STATUS,
-  GET_BACKLOGITEMS_BY_PROJECT,
-} from "@/src/gql";
+import { GET_ITEM_COUNT_BY_STATUS, GET_BACKLOGITEMS_BY_PROJECT } from "@/src/gql";
 import { BacklogItem } from "flonautics-project-types";
+import { AnyObject } from "antd/es/_util/type";
 
 const statuses = ["Not started", "Completed", "Blocked", "In progress", "Hold"];
 
 const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [backlogList, setBacklogList] = useState<BacklogItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [counts, setCounts] = useState({});
+  const [counts, setCounts] = useState<AnyObject>({});
+
   const { data, loading, error, fetchMore } = useQuery(
     GET_BACKLOGITEMS_BY_PROJECT,
     {
@@ -45,21 +44,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
     }
   );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [
-    getItemCountByStatus,
-    { loading: getItemCountLoading, data: getItemCountByStatusData },
-  ] = useLazyQuery(GET_ITEM_COUNT_BY_STATUS);
-
-  const cards = [
-    { title: "Not Started", description: "12" },
-    { title: "Completed", description: "65" },
-    { title: "Pending", description: "33" },
-    { title: "Hold", description: "2" },
-    { title: "Blocked", description: "12" },
-  ];
-
-  //here is all count of the backlogItem
-  console.log(counts, getItemCountLoading);
+  const [getItemCountByStatus, { loading: getItemCountLoading, data: getItemCountByStatusData }] = useLazyQuery(GET_ITEM_COUNT_BY_STATUS);
 
   // table columns
   const columns = [
@@ -161,21 +146,49 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
 
   return (
     <div>
-      <Row gutter={[0, 20]}>
+      <Row gutter={[0, 15]}>
         <Col span={24}>
           <span className="text-lg">Backlogs</span>
         </Col>
 
-        <Col span={24}>
+        {/* <Col span={24}>
           <Row gutter={15}>
-            {cards?.map((card, index) => (
+            {Object.keys(counts)?.map((card, index) => (
               <Col key={index} span={4}>
                 <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
-                  <h2 className="text-[15px]">{card.title}</h2>
-                  <span className="text-gray-400">{card?.description}</span>
+                  <h2 className="text-[15px]">{card}</h2>
+                  <span className="text-gray-400">{counts[card]}</span>
                 </div>
               </Col>
             ))}
+          </Row>
+        </Col> */}
+
+        <Col span={24}>
+          <Row gutter={15}>
+            {(getItemCountLoading || Object.keys(counts).length < 5 ? Array.from({ length: 5 }) : Object.keys(counts)
+            ).map((_, index) => {
+              const key = Object.keys(counts)[index];
+              const isSkeleton = loading || index >= Object.keys(counts).length;
+
+              return (
+                <Col key={index} span={4}>
+                  <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
+                    {isSkeleton ? (
+                      <>
+                        <div className="h-5 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                        <div className="h-5 bg-gray-100 rounded w-1/3 animate-pulse"></div>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="text-[15px]">{key}</h2>
+                        <span className="text-gray-400">{counts[key]}</span>
+                      </>
+                    )}
+                  </div>
+                </Col>
+              );
+            })}
           </Row>
         </Col>
 
@@ -184,7 +197,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
             dataSource={backlogList}
             columns={columns}
             rowKey={"id"}
-            onRowClick={() => {}}
+            onRowClick={() => { }}
             loading={loading}
             totalCount={totalCount}
             onPageChange={handleTableChange}
