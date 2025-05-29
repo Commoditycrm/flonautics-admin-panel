@@ -1,105 +1,154 @@
-"use client"
-import React from "react"
-import { Row, Col } from "antd"
+"use client";
+import React, { useEffect, useState } from "react";
+import { Row, Col, TablePaginationConfig } from "antd";
 
-import CustomTable from "@/src/hoc/CustomTable/CustomTable"
+import CustomTable from "@/src/hoc/CustomTable/CustomTable";
+import { useQuery } from "@apollo/client";
+import { GET_BACKLOGITEMS_BY_PROJECT } from "@/src/gql";
 
-const ProjectDetails = () => {
-
-    const cards = [
-        { title: "Not Started", description: "12" },
-        { title: "Completed", description: "65" },
-        { title: "Pending", description: "33" },
-        { title: "Hold", description: "2" },
-        { title: "Blocked", description: "12" },
-    ]
-
-    // table columns
-    const columns = [
-        {
-            title: "#",
-            dataIndex: "uid",
-            key: "uid",
+const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
+  const [backlogList, setBacklogList] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const { data, loading, error, fetchMore } = useQuery(
+    GET_BACKLOGITEMS_BY_PROJECT,
+    {
+      variables: {
+        where: {
+          project: {
+            id: projectId,
+          },
         },
-        {
-            title: "Type",
-            dataIndex: "type",
-            key: "type",
+        options: {
+          limit: 10,
+          offset: 0,
+          sort: [
+            {
+              uid: "DESC",
+            },
+          ],
         },
-        {
-            title: "Assigned User",
-            dataIndex: "assignedUser",
-            key: "assignedUser",
+        backlogItemsConnectionWhere2: {
+          project: {
+            id: projectId,
+          },
         },
-        {
-            title: "Title",
-            dataIndex: "title",
-            key: "title",
-        },
-        {
-            title: "Risk Level",
-            dataIndex: "riskLevel",
-            key: "riskLevel",
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status"
-        },
-    ]
+      },
+      skip: !projectId,
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
-    const dataSource = [
-        {
-          key: "1",
-          uid: "T-001",
-          type: "Bug",
-          assignedUser: "Alice Johnson",
-          title: "Fix login issue",
-          riskLevel: "High",
-          status: "Open",
+  const cards = [
+    { title: "Not Started", description: "12" },
+    { title: "Completed", description: "65" },
+    { title: "Pending", description: "33" },
+    { title: "Hold", description: "2" },
+    { title: "Blocked", description: "12" },
+  ];
+
+  // table columns
+  const columns = [
+    {
+      title: "#",
+      dataIndex: "uid",
+      key: "uid",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Assigned User",
+      dataIndex: "assignedUser",
+      key: "assignedUser",
+    },
+    {
+      title: "Title",
+      dataIndex: "label",
+      key: "label",
+    },
+    {
+      title: "Risk Level",
+      dataIndex: "riskLevel",
+      key: "riskLevel",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+  ];
+
+  const handleTableChange = async (pagination: TablePaginationConfig) => {
+    const { current = 1, pageSize = 10 } = pagination;
+    const offset = (current - 1) * pageSize;
+    try {
+      await fetchMore({
+        variables: {
+          options: {
+            limit: pageSize,
+            offset,
+            sort: [
+              {
+                uid: "DESC",
+              },
+            ],
+          },
         },
-        {
-          key: "2",
-          uid: "T-002",
-          type: "Feature",
-          assignedUser: "Bob Smith",
-          title: "Add password reset",
-          riskLevel: "Medium",
-          status: "In Progress",
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
         },
-    ]
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    return (
-        <div>
-            <Row gutter={[0, 20]}>
-                <Col span={24}>
-                    <span className="text-lg">Backlogs</span>
-                </Col>
+  useEffect(() => {
+    if (data && data?.backlogItems.length) {
+      setBacklogList(data.backlogItems);
+      setTotalCount(data.backlogItemsConnection?.totalCount);
+    }
+  }, [data]);
 
-                <Col span={24}>
-                    <Row gutter={15}>
-                        {cards?.map((card, index) => (
-                            <Col key={index} span={4}>
-                                <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
-                                    <h2 className="text-[15px]">{card.title}</h2>
-                                    <span className="text-gray-400">{card?.description}</span>
-                                </div>
-                            </Col>
-                        ))}
-                    </Row>
-                </Col>
+  if (error) return <div> {error?.message}</div>;
 
-                <Col span={24}>
-                    <CustomTable
-                        dataSource={dataSource}
-                        columns={columns}
-                        rowKey={"uid"}
-                        onRowClick={() => { }}
-                    />
-                </Col>
-            </Row>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Row gutter={[0, 20]}>
+        <Col span={24}>
+          <span className="text-lg">Backlogs</span>
+        </Col>
 
-export default ProjectDetails
+        <Col span={24}>
+          <Row gutter={15}>
+            {cards?.map((card, index) => (
+              <Col key={index} span={4}>
+                <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
+                  <h2 className="text-[15px]">{card.title}</h2>
+                  <span className="text-gray-400">{card?.description}</span>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Col>
+
+        <Col span={24}>
+          <CustomTable
+            dataSource={backlogList}
+            columns={columns}
+            rowKey={"id"}
+            onRowClick={() => {}}
+            loading={loading}
+            totalCount={totalCount}
+            onPageChange={handleTableChange}
+          />
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default ProjectDetails;

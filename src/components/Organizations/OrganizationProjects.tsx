@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import { TablePaginationConfig } from "antd";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
-import { GET_PROJECTS_IN_ORGANIZATION } from "@/src/gql";
+import { GET_PROJECTS_BY_ORG } from "@/src/gql";
 
-const OrganizationProjects = () => {
+const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
   const [dataSource, setDataDource] = useState([]);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-  const params = useParams();
-  const orgId = params?.organizationId;
-
-  const router = useRouter()
+  const router = useRouter();
 
   const { getColumnSearchProps } = useColumnSearch();
 
-  const { data, loading, fetchMore } = useQuery(GET_PROJECTS_IN_ORGANIZATION, {
+  const { data, loading, fetchMore } = useQuery(GET_PROJECTS_BY_ORG, {
     variables: {
       where: {
         organization: {
@@ -42,6 +38,8 @@ const OrganizationProjects = () => {
         },
       },
     },
+    skip: !orgId,
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -94,7 +92,6 @@ const OrganizationProjects = () => {
     const { current = 1, pageSize = 10 } = pagination;
     const offset = (current - 1) * pageSize;
 
-    setIsFetchingMore(true);
     try {
       await fetchMore({
         variables: {
@@ -109,8 +106,8 @@ const OrganizationProjects = () => {
           return fetchMoreResult;
         },
       });
-    } finally {
-      setIsFetchingMore(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -120,8 +117,10 @@ const OrganizationProjects = () => {
         dataSource={dataSource}
         columns={columns}
         rowKey={"id"}
-        onRowClick={(record) => router.push(`/organizations/${orgId}/projects/${record.id}`)}
-        loading={loading || isFetchingMore}
+        onRowClick={(record) =>
+          router.push(`/organizations/${orgId}/projects/${record.id}`)
+        }
+        loading={loading}
         totalCount={totalCount}
         onPageChange={handleTableChange}
       />

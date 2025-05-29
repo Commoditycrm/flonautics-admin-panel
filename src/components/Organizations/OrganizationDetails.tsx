@@ -9,7 +9,9 @@ import OrganizationUsers from "./OrganizationUsers";
 import OrganizationProjects from "./OrganizationProjects";
 const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
   const [orgDetail, setOrgDetail] = useState([]);
-  const [cards, setCards] = useState<Array<{ title: string; description: number }>>([]);
+  const [cards, setCards] = useState<
+    Array<{ title: string; description: number }>
+  >([]);
 
   const { data, loading, error } = useQuery(GET_ORGANIZATION_BY_ID, {
     variables: {
@@ -38,21 +40,21 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
     }
   }, [data]);
 
-  const items: TabsProps['items'] = [
+  const items: TabsProps["items"] = [
     {
-      key: '1',
-      label: 'Summary',
+      key: "1",
+      label: "Summary",
       children: <Summary cards={cards} orgDetail={orgDetail} />,
     },
     {
-      key: '2',
-      label: 'Users',
+      key: "2",
+      label: "Users",
       children: <OrganizationUsers />,
     },
     {
-      key: '3',
-      label: 'Projects',
-      children: <OrganizationProjects />,
+      key: "3",
+      label: "Projects",
+      children: <OrganizationProjects orgId={orgId} />,
     },
   ];
 
@@ -60,9 +62,7 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
 
   if (loading) return <p> ..Loading </p>;
 
-  return (
-    <Tabs defaultActiveKey="1" items={items} />
-  );
+  return <Tabs defaultActiveKey="1" items={items} />;
 };
 
 export default OrganizationDetails;

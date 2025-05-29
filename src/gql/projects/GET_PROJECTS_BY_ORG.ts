@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const GET_PROJECTS_IN_ORGANIZATION = gql`
-  query GetProjectsInOrganization(
+export const GET_PROJECTS_BY_ORG = gql`
+  query GetProjectsByOrg(
     $where: ProjectWhere
     $options: ProjectOptions
     $projectsConnectionWhere2: ProjectWhere
