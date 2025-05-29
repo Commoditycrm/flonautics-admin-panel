@@ -3,12 +3,18 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, TablePaginationConfig } from "antd";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
-import { useQuery } from "@apollo/client";
-import { GET_BACKLOGITEMS_BY_PROJECT } from "@/src/gql";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import {
+  GET_ITEM_COUNT_BY_STATUS,
+  GET_BACKLOGITEMS_BY_PROJECT,
+} from "@/src/gql";
+
+const statuses = ["Not started", "Completed", "Blocked", "In progress", "Hold"];
 
 const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [backlogList, setBacklogList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [counts, setCounts] = useState({});
   const { data, loading, error, fetchMore } = useQuery(
     GET_BACKLOGITEMS_BY_PROJECT,
     {
@@ -37,6 +43,11 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
       notifyOnNetworkStatusChange: true,
     }
   );
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [
+    getItemCountByStatus,
+    { loading: getItemCountLoading, data: getItemCountByStatusData },
+  ] = useLazyQuery(GET_ITEM_COUNT_BY_STATUS);
 
   const cards = [
     { title: "Not Started", description: "12" },
@@ -45,6 +56,9 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
     { title: "Hold", description: "2" },
     { title: "Blocked", description: "12" },
   ];
+
+  //here is all count of the backlogItem 
+  console.log(counts, getItemCountLoading);
 
   // table columns
   const columns = [
@@ -112,6 +126,35 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
       setTotalCount(data.backlogItemsConnection?.totalCount);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (currentIndex < statuses.length) {
+      getItemCountByStatus({
+        variables: {
+          where: {
+            project: {
+              id: projectId,
+            },
+            status: {
+              name_CONTAINS: statuses[currentIndex],
+            },
+          },
+        },
+      });
+    }
+  }, [currentIndex, getItemCountByStatus, projectId]);
+
+  useEffect(() => {
+    if (getItemCountByStatusData) {
+      const status = statuses[currentIndex];
+      setCounts((prev) => ({
+        ...prev,
+        [status]: getItemCountByStatusData.backlogItemsConnection.totalCount,
+      }));
+      setCurrentIndex((prev) => prev + 1);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getItemCountByStatusData]);
 
   if (error) return <div> {error?.message}</div>;
 
