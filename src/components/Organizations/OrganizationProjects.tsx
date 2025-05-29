@@ -7,9 +7,15 @@ import { displayDate } from "@/src/data/helpers/displayDate";
 import { TablePaginationConfig } from "antd";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
 import { GET_PROJECTS_BY_ORG } from "@/src/gql";
+import {
+  Project,
+  ProjectAssignedUsersConnection,
+  SortDirection,
+  User,
+} from "flonautics-project-types";
 
 const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
-  const [dataSource, setDataDource] = useState([]);
+  const [dataSource, setDataDource] = useState<Project[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
 
   const router = useRouter();
@@ -28,7 +34,7 @@ const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
         offset: 0,
         sort: [
           {
-            createdAt: "DESC",
+            createdAt: SortDirection.Desc,
           },
         ],
       },
@@ -70,7 +76,7 @@ const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
       title: "Created By",
       dataIndex: "createdBy",
       key: "createdBy",
-      render: (createdBy: { name: string }) => createdBy?.name,
+      render: (createdBy: User) => createdBy?.name,
       ...getColumnSearchProps("createdBy.name"),
     },
     {
@@ -83,8 +89,7 @@ const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
       title: "Total Users",
       dataIndex: "assignedUsersConnection",
       key: "assignedUsersConnection",
-      render: (assignedUsersConnection: { totalCount: number }) =>
-        assignedUsersConnection?.totalCount,
+      render: (record: ProjectAssignedUsersConnection) => record?.totalCount,
     },
   ];
 
@@ -98,7 +103,7 @@ const OrganizationProjects: React.FC<{ orgId: string }> = ({ orgId }) => {
           options: {
             limit: pageSize,
             offset,
-            sort: [{ createdAt: "DESC" }],
+            sort: [{ createdAt: SortDirection.Desc }],
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {

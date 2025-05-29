@@ -8,11 +8,12 @@ import {
   GET_ITEM_COUNT_BY_STATUS,
   GET_BACKLOGITEMS_BY_PROJECT,
 } from "@/src/gql";
+import { BacklogItem } from "flonautics-project-types";
 
 const statuses = ["Not started", "Completed", "Blocked", "In progress", "Hold"];
 
 const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
-  const [backlogList, setBacklogList] = useState([]);
+  const [backlogList, setBacklogList] = useState<BacklogItem[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [counts, setCounts] = useState({});
   const { data, loading, error, fetchMore } = useQuery(
@@ -57,7 +58,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
     { title: "Blocked", description: "12" },
   ];
 
-  //here is all count of the backlogItem 
+  //here is all count of the backlogItem
   console.log(counts, getItemCountLoading);
 
   // table columns
@@ -153,7 +154,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
       }));
       setCurrentIndex((prev) => prev + 1);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getItemCountByStatusData]);
 
   if (error) return <div> {error?.message}</div>;

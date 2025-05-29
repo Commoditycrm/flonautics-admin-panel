@@ -8,9 +8,16 @@ import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { GET_ORGANIZATIONS } from "@/src/gql";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
+import {
+  Organization,
+  OrganizationMemberUsersConnection,
+  OrganizationProjectsConnection,
+  SortDirection,
+  User,
+} from "flonautics-project-types";
 const Organizations = () => {
   const router = useRouter();
-  const [organizations, setOrganizations] = useState<[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
@@ -23,7 +30,7 @@ const Organizations = () => {
         offset: 0,
         sort: [
           {
-            lastModified: "DESC",
+            lastModified: SortDirection.Desc,
           },
           // {
           //   createdAt: "DESC",
@@ -51,7 +58,7 @@ const Organizations = () => {
       title: "Created By",
       dataIndex: "createdBy",
       key: "createdBy",
-      render: (createdBy: { name: string }) => createdBy?.name,
+      render: (createdBy: User) => createdBy?.name,
       ...getColumnSearchProps("createdBy.name"),
     },
     {
@@ -71,14 +78,14 @@ const Organizations = () => {
       title: "Users",
       dataIndex: "memberUsersConnection",
       key: "memberUsersConnection",
-      render: (memberUsersConnection: { totalCount: number }) =>
+      render: (memberUsersConnection: OrganizationMemberUsersConnection) =>
         memberUsersConnection?.totalCount,
     },
     {
       title: "Projects",
       dataIndex: "projectsConnection",
       key: "projectsConnection",
-      render: (projectsConnection: { totalCount: number }) =>
+      render: (projectsConnection: OrganizationProjectsConnection) =>
         projectsConnection?.totalCount,
     },
     {

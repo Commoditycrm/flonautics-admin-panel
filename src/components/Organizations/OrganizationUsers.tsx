@@ -4,19 +4,16 @@ import { Space, TablePaginationConfig, Typography } from "antd";
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import AlphabetAvatar from "@/src/hoc/CustomAvatar/AlphabetAvatar";
 import { useQuery } from "@apollo/client";
-import { useParams } from "next/navigation";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
 import { GET_MEMBERS_IN_ORG } from "@/src/gql";
+import { SortDirection, User } from "flonautics-project-types";
 
 const { Text } = Typography;
 
-const OrganizationUsers = () => {
-  const [dataSource, setDataDource] = useState([]);
+const OrganizationUsers: React.FC<{ orgId: string }> = ({ orgId }) => {
+  const [dataSource, setDataDource] = useState<User[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
-
-  const params = useParams();
-  const orgId = params?.organizationId;
 
   const { getColumnSearchProps } = useColumnSearch();
 
@@ -32,7 +29,7 @@ const OrganizationUsers = () => {
         offset: 0,
         sort: [
           {
-            createdAt: "DESC",
+            createdAt: SortDirection.Desc,
           },
         ],
       },
@@ -90,7 +87,7 @@ const OrganizationUsers = () => {
           options: {
             limit: pageSize,
             offset,
-            sort: [{ createdAt: "DESC" }],
+            sort: [{ createdAt: SortDirection.Desc }],
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {

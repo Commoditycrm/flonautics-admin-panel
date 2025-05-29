@@ -1,6 +1,7 @@
 import { TableColumnsType, TablePaginationConfig } from "antd";
 import { AnyObject } from "antd/es/_util/type";
 import { Rule } from "antd/es/form";
+import { Organization } from "flonautics-project-types";
 import { ChangeEvent } from "react";
 
 export type ICustomInput = {
@@ -42,7 +43,7 @@ export type ICustomTable = {
 };
 
 export type ISummary = {
-  orgDetail: never[]
+  orgDetail: Organization[]
   cards: Array<{ title: string; description: number }>
 }
 
