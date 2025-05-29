@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { FC } from "react";
 import { Col, Row, Space } from "antd";
 
@@ -9,7 +8,6 @@ import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
-
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
     onError(error) {
       console.error(error);
@@ -21,24 +19,20 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
       await toggleOrgStatus({
         variables: {
           where: {
-            // @ts-ignore
             id: orgDetail[0].id,
           },
           update: {
-            // @ts-ignore
             deletedAt: orgDetail[0]?.deletedAt === null ? new Date() : null,
           },
         },
         update(cache) {
           cache.modify({
             id: cache.identify({
-              // @ts-ignore
               id: orgDetail[0].id,
               __typename: "Organization",
             }),
             fields: {
               deletedAt() {
-                // @ts-ignore
                 return orgDetail[0]?.deletedAt === null ? new Date() : null;
               },
             },
@@ -57,23 +51,10 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           <Row justify="space-between">
             <Col>
               <Space direction="vertical" size={0}>
-                <span className="text-[17px]">
-                  {
-                    // @ts-ignore
-                    orgDetail[0]?.name
-                  }{" "}
-                </span>
+                <span className="text-[17px]">{orgDetail[0]?.name} </span>
                 <span className="text-sm text-gray-400">
-                  Created By{" "}
-                  {
-                    // @ts-ignore
-                    orgDetail[0]?.createdBy?.name
-                  }{" "}
-                  On{" "}
-                  {
-                    // @ts-ignore
-                    displayDate(orgDetail[0]?.createdAt)
-                  }
+                  Created By {orgDetail[0]?.createdBy?.name} On{" "}
+                  {displayDate(orgDetail[0]?.createdAt)}
                 </span>
               </Space>
             </Col>
@@ -81,11 +62,11 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
             <Col>
               <Space>
                 <CustomButton
-                  // @ts-ignore
-                  value={orgDetail[0]?.deletedAt === null ? "Deactivate" : "Activate"}
+                  value={
+                    orgDetail[0]?.deletedAt === null ? "Deactivate" : "Activate"
+                  }
                   type={"primary"}
                   onClick={handleUpdateOrgStatus}
-                  // @ts-ignore
                   color={orgDetail[0]?.deletedAt === null ? "red" : ""}
                   disabled={loading}
                   loading={loading}

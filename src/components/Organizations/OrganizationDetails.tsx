@@ -7,8 +7,9 @@ import { GET_ORGANIZATION_BY_ID } from "@/src/gql";
 import Summary from "./Summary";
 import OrganizationUsers from "./OrganizationUsers";
 import OrganizationProjects from "./OrganizationProjects";
+import { Organization } from "flonautics-project-types";
 const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
-  const [orgDetail, setOrgDetail] = useState([]);
+  const [orgDetail, setOrgDetail] = useState<Organization[]>([]);
   const [cards, setCards] = useState<
     Array<{ title: string; description: number }>
   >([]);
@@ -49,7 +50,7 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
     {
       key: "2",
       label: "Users",
-      children: <OrganizationUsers />,
+      children: <OrganizationUsers orgId={orgId} />,
     },
     {
       key: "3",

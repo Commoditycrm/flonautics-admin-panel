@@ -17,7 +17,7 @@
     "antd": "^5.25.2",
     "date-fns": "^4.1.0",
     "firebase": "^11.8.0",
-    "flonautics-project-types": "Commoditycrm/flonautic-project-types#v1.0.1",
+    "flonautics-project-types": "git+https://github.com/Commoditycrm/flonautic-project-types.git",
     "graphql": "^16.11.0",
     "js-cookie": "^3.0.5",
     "next": "15.3.2",
