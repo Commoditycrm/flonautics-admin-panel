@@ -1,28 +1,31 @@
-"use client"
-import React from "react"
+"use client";
+import React, { useEffect, useState } from "react";
 
-import CustomTable from "@/src/hoc/CustomTable/CustomTable"
+import CustomTable from "@/src/hoc/CustomTable/CustomTable";
+import { useQuery } from "@apollo/client";
+import { GET_TEMPLATES } from "@/src/gql";
+import { Project, SortDirection } from "flonautics-project-types";
 
-const Templates = () => {
-
-  const dataSource = [
-    {
-      key: "1",
-      name: "Flonautics Template",
-      description: "This sprint focuses on login and registration modules.",
-      createdBy: "Alice Johnson",
-      createdAt: "2025-05-30",
-      totalBacklogs: 12,
+const Templates: React.FC = () => {
+  const { data, loading } = useQuery(GET_TEMPLATES, {
+    variables: {
+      where: {
+        isTemplate: true,
+      },
+      options: {
+        limit: 10,
+        offset: 0,
+        sort: [
+          {
+            createdAt: SortDirection.Desc,
+          },
+        ],
+      },
     },
-    {
-      key: "2",
-      name: "Sample One",
-      description: "Implement payment integration and cart functionality.",
-      createdBy: "Bob Smith",
-      createdAt: "2025-05-28",
-      totalBacklogs: 8,
-    },
-  ]
+  });
+
+  const [templates, setTemplates] = useState<Project[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(10);
 
   // table columns
   const columns = [
@@ -57,16 +60,25 @@ const Templates = () => {
     },
   ];
 
+  useEffect(() => {
+    if (data && data.projects.length) {
+      setTemplates(data.projects);
+      setTotalCount(data?.projectsConnection.totalCount);
+    }
+  }, [data]);
+
   return (
     <div>
       <CustomTable
-        dataSource={dataSource}
+        dataSource={templates}
         columns={columns}
-        rowKey={"key"}
-        onRowClick={() => { }}
+        rowKey="id"
+        loading={loading}
+        onRowClick={() => {}}
+        totalCount={totalCount}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Templates
+export default Templates;
