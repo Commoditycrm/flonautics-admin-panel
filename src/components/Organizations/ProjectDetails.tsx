@@ -5,7 +5,7 @@ import { Row, Col, TablePaginationConfig, Tag, Badge, Typography } from "antd";
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_ITEM_COUNT_BY_STATUS, GET_BACKLOGITEMS_BY_PROJECT } from "@/src/gql";
-import { BacklogItem } from "flonautics-project-types";
+import { BacklogItem, SortDirection } from "flonautics-project-types";
 import { AnyObject } from "antd/es/_util/type";
 import { riskLevelHandler } from "@/src/data/helpers/riskLevelHandler";
 
@@ -32,7 +32,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
           offset: 0,
           sort: [
             {
-              uid: "DESC",
+              uid: SortDirection.Desc,
             },
           ],
         },

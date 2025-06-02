@@ -1,11 +1,13 @@
 import React, { FC } from "react";
-import { Col, Row, Space } from "antd";
+import { Col, Row, Space, Typography } from "antd";
 
 import { ISummary } from "@/src/data/types";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import CustomButton from "@/src/hoc/CustomButton/CustomButton";
 import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
+
+const { Paragraph, Title, Text } = Typography;
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
@@ -51,11 +53,12 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           <Row justify="space-between">
             <Col>
               <Space direction="vertical" size={0}>
-                <span className="text-[17px]">{orgDetail[0]?.name} </span>
-                <span className="text-sm text-gray-400">
+                <Title type="secondary" level={3}>{orgDetail[0]?.name} </Title>
+                <Paragraph>{orgDetail[0]?.description} </Paragraph>
+                <Text type="secondary" strong>
                   Created By {orgDetail[0]?.createdBy?.name} On{" "}
                   {displayDate(orgDetail[0]?.createdAt)}
-                </span>
+                </Text>
               </Space>
             </Col>
 

@@ -5,6 +5,7 @@ export const GET_ORGANIZATION_BY_ID = gql`
     organizations(where: $where) {
       id
       name
+      description
       createdAt
       deletedAt
       createdBy {
