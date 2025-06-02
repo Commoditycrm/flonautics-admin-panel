@@ -1,14 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Row, Col, TablePaginationConfig } from "antd";
+import { Row, Col, TablePaginationConfig, Tag, Badge, Typography } from "antd";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_ITEM_COUNT_BY_STATUS, GET_BACKLOGITEMS_BY_PROJECT } from "@/src/gql";
 import { BacklogItem, SortDirection } from "flonautics-project-types";
 import { AnyObject } from "antd/es/_util/type";
+import { riskLevelHandler } from "@/src/data/helpers/riskLevelHandler";
 
 const statuses = ["Not started", "Completed", "Blocked", "In progress", "Hold"];
+
+const { Text } = Typography
 
 const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [backlogList, setBacklogList] = useState<BacklogItem[]>([]);
@@ -57,26 +60,49 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
       title: "Type",
       dataIndex: "type",
       key: "type",
+      render: (type: { name: string }) => type?.name
     },
     {
       title: "Assigned User",
       dataIndex: "assignedUser",
       key: "assignedUser",
+      render: (assignedUser: { name: string }) => assignedUser?.name || "-"
     },
     {
       title: "Title",
       dataIndex: "label",
       key: "label",
+      render: (label: string) =>
+        label?.length > 30
+          ? `${label.slice(0, 30)}...`
+          : label || "-",
     },
     {
       title: "Risk Level",
       dataIndex: "riskLevel",
       key: "riskLevel",
+      render: (riskLevel: string) => {
+        const { color, text } = riskLevelHandler(riskLevel);
+        return (
+          <Badge
+            status={color}
+            text={
+              text ? (
+                <Text className="text-md">{text}</Text>
+              ) : (
+                <Text type="secondary">_</Text>
+              )
+            }
+          />
+        );
+      },
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      render: (status: { name: string, color: string }) => <Tag color={status?.color}>{status.name} </Tag >
+
     },
   ];
 
