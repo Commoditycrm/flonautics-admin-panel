@@ -3,15 +3,19 @@ import { Avatar, Col, Divider, Popover, Row, Space, Typography } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
 import { signOut } from "firebase/auth";
-import firebaseAuth from "@/firebaseConfig";
+import { firebaseAuth } from "@/firebaseConfig";
 import { clearCookies } from "../data/helpers/authCookies";
 import { useRouter } from "next/navigation";
 import client from "@/apolloClient";
+import { useAuthStore } from "../store/useAuthStore";
 
 const { Text } = Typography;
 
 const Navbar = () => {
+
   const router = useRouter();
+
+  const user = useAuthStore((state) => state.user);
 
   const handleLogout = async () => {
     await signOut(firebaseAuth);
@@ -26,10 +30,8 @@ const Navbar = () => {
         <Space>
           <Avatar icon={<UserOutlined />} size={38} />
           <Space direction="vertical" size={0}>
-            <Text className="text-md">Username</Text>
-            <Text className="text-md" type="secondary">
-              email
-            </Text>
+            <Text className="text-md">{user?.displayName}</Text>
+            <Text className="text-md" type="secondary">{user?.email}</Text>
           </Space>
         </Space>
       </Col>
