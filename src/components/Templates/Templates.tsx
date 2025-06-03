@@ -7,7 +7,7 @@ import { GET_TEMPLATES } from "@/src/gql";
 import { Project, SortDirection } from "flonautics-project-types";
 
 const Templates: React.FC = () => {
-  const { data, loading } = useQuery(GET_TEMPLATES, {
+  const { data, loading, error } = useQuery(GET_TEMPLATES, {
     variables: {
       where: {
         isTemplate: true,
@@ -20,6 +20,9 @@ const Templates: React.FC = () => {
             createdAt: SortDirection.Desc,
           },
         ],
+      },
+      projectsConnectionWhere2: {
+        isTemplate: true,
       },
     },
   });
@@ -66,6 +69,8 @@ const Templates: React.FC = () => {
       setTotalCount(data?.projectsConnection.totalCount);
     }
   }, [data]);
+
+  if (error) return <div> {error.message} </div>;
 
   return (
     <div>
