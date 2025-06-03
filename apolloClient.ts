@@ -8,7 +8,7 @@ import {
 import { onError } from "@apollo/client/link/error";
 // import fetch from "cross-fetch";
 import { signOut } from "firebase/auth";
-import firebaseAuth from "./firebaseConfig";
+import {firebaseAuth} from "./firebaseConfig";
 import { getCookie, setCookie } from "./src/data/helpers/authCookies";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;

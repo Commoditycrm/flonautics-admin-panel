@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Col, Form, Row } from "antd";
 import { FirebaseError } from "firebase/app";
-import firebaseAuth from "@/firebaseConfig";
+import { firebaseAuth } from "@/firebaseConfig";
 import { useRouter } from "next/navigation";
 
 import CustomInput from "../hoc/CustomInputs/CustomInput";
