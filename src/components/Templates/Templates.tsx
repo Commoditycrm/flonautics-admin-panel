@@ -5,6 +5,7 @@ import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { useQuery } from "@apollo/client";
 import { GET_TEMPLATES } from "@/src/gql";
 import { Project, SortDirection } from "flonautics-project-types";
+import { displayDate } from "@/src/data/helpers/displayDate";
 
 const Templates: React.FC = () => {
   const { data, loading, error } = useQuery(GET_TEMPLATES, {
@@ -50,16 +51,19 @@ const Templates: React.FC = () => {
       title: "Created By",
       dataIndex: "createdBy",
       key: "createdBy",
+      render: (createdBy: { name: string }) => createdBy?.name,
     },
     {
       title: "Created On",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (createdAt: string) => displayDate(createdAt),
     },
     {
       title: "Total Backlogs",
-      dataIndex: "totalBacklogs",
-      key: "totalBacklogs",
+      dataIndex: "backlogItemConnection",
+      key: "backlogItemConnection",
+      render: (backlogItemConnection: { totalCount: number }) => backlogItemConnection?.totalCount,
     },
   ];
 
@@ -79,7 +83,7 @@ const Templates: React.FC = () => {
         columns={columns}
         rowKey="id"
         loading={loading}
-        onRowClick={() => {}}
+        onRowClick={() => { }}
         totalCount={totalCount}
       />
     </div>

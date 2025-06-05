@@ -195,7 +195,7 @@ const ProjectDetails: React.FC<{ projectId: string }> = ({ projectId }) => {
             {(getItemCountLoading || Object.keys(counts).length < 5 ? Array.from({ length: 5 }) : Object.keys(counts)
             ).map((_, index) => {
               const key = Object.keys(counts)[index];
-              const isSkeleton = loading || index >= Object.keys(counts).length;
+              const isSkeleton = getItemCountLoading || index >= Object.keys(counts).length;
 
               return (
                 <Col key={index} span={4}>
