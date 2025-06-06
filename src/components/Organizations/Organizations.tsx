@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row, TablePaginationConfig } from "antd";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
-import { GET_ORGANIZATIONS } from "@/src/gql";
+import { DELETE_ORG, GET_ORGANIZATIONS } from "@/src/gql";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
 import {
@@ -15,11 +15,15 @@ import {
   SortDirection,
   User,
 } from "flonautics-project-types";
+import { DeleteOutlined } from "@ant-design/icons";
+import ConfirmModal from "@/src/hoc/ConfirmModal";
 const Organizations = () => {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [orgId, setOrgId] = useState<string | null>(null);
 
   const { getColumnSearchProps } = useColumnSearch();
 
@@ -39,6 +43,41 @@ const Organizations = () => {
       },
     },
   });
+
+  const [deleteOrg, { loading: deleteOrgLoading }] = useMutation(DELETE_ORG, {
+    onCompleted() {
+      setOrgId(null);
+      setShowModal(false);
+    },
+    onError(error) {
+      console.error(error);
+    },
+  });
+  const handleDeleteOrg = async () => {
+    try {
+      await deleteOrg({
+        variables: {
+          orgId,
+        },
+        update(cache) {
+          cache.evict({
+            id: cache.identify({
+              id: orgId,
+              __typename: "Organization",
+            }),
+          });
+          cache.gc()
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOrgId(null);
+    setShowModal(false);
+  };
 
   useEffect(() => {
     if (data && data?.organizations?.length) {
@@ -99,6 +138,30 @@ const Organizations = () => {
           <span className="text-red-600">Inactive</span>
         ),
     },
+    {
+      title: "",
+      dataIndex: "id",
+      key: "deleteOrg",
+      render: (id: string) => {
+        return (
+          <DeleteOutlined
+            color="red"
+            className="hover:text-red-400"
+            style={{
+              color: "red",
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+
+              if (id) {
+                setOrgId(id);
+                setShowModal(true);
+              }
+            }}
+          />
+        );
+      },
+    },
   ];
 
   const handleTableChange = async (pagination: TablePaginationConfig) => {
@@ -150,6 +213,14 @@ const Organizations = () => {
           />
         </Col>
       </Row>
+      <ConfirmModal
+        isOpen={showModal}
+        description="Are you sure you want to delete this organization? This action is irreversible and will permanently remove all associated data."
+        onClose={handleCloseModal}
+        onOk={handleDeleteOrg}
+        title="Delete Organization"
+        loading={deleteOrgLoading}
+      />
     </div>
   );
 };

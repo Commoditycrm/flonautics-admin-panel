@@ -52,3 +52,12 @@ export type IAlphabetAvatar = {
   size: number;
   count?: number | string;
 };
+
+export type IConfirmModal = {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  description: string;
+  onOk: () => void;
+  loading?: boolean;
+};
