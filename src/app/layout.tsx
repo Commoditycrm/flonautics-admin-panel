@@ -10,10 +10,15 @@ export const metadata: Metadata = {
 
 import { ReactNode } from "react";
 import { Metadata } from "next";
+import { AuthProvider } from "../providers/AuthProvider";
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

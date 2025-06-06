@@ -1,13 +1,11 @@
 import React, { FC } from "react";
-import { Col, Row, Space, Typography } from "antd";
+import { Col, Row, Space } from "antd";
 
 import { ISummary } from "@/src/data/types";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import CustomButton from "@/src/hoc/CustomButton/CustomButton";
 import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
-
-const { Paragraph, Title, Text } = Typography;
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
@@ -51,18 +49,18 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
       <Row gutter={[0, 25]}>
         <Col span={24}>
           <Row justify="space-between">
-            <Col>
-              <Space direction="vertical" size={0}>
-                <Title type="secondary" level={3}>{orgDetail[0]?.name} </Title>
-                <Paragraph>{orgDetail[0]?.description} </Paragraph>
-                <Text type="secondary" strong>
+            <Col span={20}>
+              <Space direction="vertical" size={5}>
+                <span className="text-[17px] font-semibold">{orgDetail[0]?.name} </span>
+                <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae necessitatibus officiis quisquam autem! Sint quaerat vitae amet nulla autem! Ad autem sit incidunt ea, illo, sequi sint deserunt, veniam voluptate nulla ipsum! </span>
+                <span className="text-gray-400">
                   Created By {orgDetail[0]?.createdBy?.name} On{" "}
                   {displayDate(orgDetail[0]?.createdAt)}
-                </Text>
+                </span>
               </Space>
             </Col>
 
-            <Col>
+            <Col span={2}>
               <Space>
                 <CustomButton
                   value={

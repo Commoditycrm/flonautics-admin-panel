@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
@@ -11,11 +11,9 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Prevent reinitialization in hot reload / multiple imports
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig);
+const firebaseAuth = getAuth(app);
 
-const firebaseAuth = getAuth(app)
-
-
-export default firebaseAuth
-
+export { app, firebaseAuth }; 
