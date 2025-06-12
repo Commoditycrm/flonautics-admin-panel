@@ -8,6 +8,7 @@ export const TOGGLE_ORG_STATUS = gql`
     updateOrganizations(where: $where, update: $update) {
       organizations {
         id
+        deletedAt
       }
     }
   }

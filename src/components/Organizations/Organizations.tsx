@@ -23,7 +23,7 @@ const Organizations = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [orgId, setOrgId] = useState<string | null>(null);
+  const [org, setOrg] = useState<Organization | null>(null);
 
   const { getColumnSearchProps } = useColumnSearch();
 
@@ -45,9 +45,32 @@ const Organizations = () => {
   });
 
   const [deleteOrg, { loading: deleteOrgLoading }] = useMutation(DELETE_ORG, {
-    onCompleted() {
-      setOrgId(null);
+    async onCompleted() {
+      setOrg(null);
       setShowModal(false);
+      try {
+        const response = await fetch(
+          "https://react-auth-flow.vercel.app/api/organizations/delete",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userEmail: org?.createdBy.email,
+              userName: org?.createdBy.name,
+              orgName: org?.name,
+            }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error(errorData);
+        }
+      } catch (error) {
+        console.error("Error while removing user:", error);
+        alert(`Error: ${error}`);
+      }
     },
     onError(error) {
       console.error(error);
@@ -57,16 +80,16 @@ const Organizations = () => {
     try {
       await deleteOrg({
         variables: {
-          orgId,
+          orgId: org?.id,
         },
         update(cache) {
           cache.evict({
             id: cache.identify({
-              id: orgId,
+              id: org?.id,
               __typename: "Organization",
             }),
           });
-          cache.gc()
+          cache.gc();
         },
       });
     } catch (error) {
@@ -75,7 +98,7 @@ const Organizations = () => {
   };
 
   const handleCloseModal = () => {
-    setOrgId(null);
+    setOrg(null);
     setShowModal(false);
   };
 
@@ -142,7 +165,7 @@ const Organizations = () => {
       title: "",
       dataIndex: "id",
       key: "deleteOrg",
-      render: (id: string) => {
+      render: (_: string, record: Organization) => {
         return (
           <DeleteOutlined
             color="red"
@@ -152,9 +175,8 @@ const Organizations = () => {
             }}
             onClick={(event) => {
               event.stopPropagation();
-
-              if (id) {
-                setOrgId(id);
+              if (record?.id) {
+                setOrg(record);
                 setShowModal(true);
               }
             }}
@@ -204,6 +226,8 @@ const Organizations = () => {
           <CustomTable
             loading={loading || isFetchingMore}
             dataSource={organizations}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
             columns={columns}
             rowKey={"id"}
             pageSize={10}
