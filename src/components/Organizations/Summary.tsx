@@ -12,6 +12,32 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
     onError(error) {
       console.error(error);
     },
+    async onCompleted({ updateOrganizations: { organizations } }) {
+      try {
+        if (organizations[0]?.deletedAt) {
+          const response = await fetch(
+            "https://react-auth-flow.vercel.app/api/organizations/deactivate",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userEmail: orgDetail[0]?.createdBy?.email,
+                userName: orgDetail[0]?.createdBy?.name,
+                orgName: orgDetail[0]?.name,
+              }),
+            }
+          );
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error(errorData);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
   });
 
   const handleUpdateOrgStatus = async () => {
@@ -51,8 +77,15 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           <Row justify="space-between">
             <Col span={20}>
               <Space direction="vertical" size={5}>
-                <span className="text-[17px] font-semibold">{orgDetail[0]?.name} </span>
-                <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae necessitatibus officiis quisquam autem! Sint quaerat vitae amet nulla autem! Ad autem sit incidunt ea, illo, sequi sint deserunt, veniam voluptate nulla ipsum! </span>
+                <span className="text-[17px] font-semibold">
+                  {orgDetail[0]?.name}{" "}
+                </span>
+                <span>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Repudiandae necessitatibus officiis quisquam autem! Sint
+                  quaerat vitae amet nulla autem! Ad autem sit incidunt ea,
+                  illo, sequi sint deserunt, veniam voluptate nulla ipsum!{" "}
+                </span>
                 <span className="text-gray-400">
                   Created By {orgDetail[0]?.createdBy?.name} On{" "}
                   {displayDate(orgDetail[0]?.createdAt)}
