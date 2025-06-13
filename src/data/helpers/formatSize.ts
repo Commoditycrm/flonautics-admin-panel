@@ -1,4 +1,5 @@
-export const formatSize = (bytes: number) => {
+export const formatSize = (kilobytes: number) => {
+    const bytes = kilobytes * 1024;
     const MB = 1024 * 1024;
     const GB = 1024 * MB;
 
@@ -7,4 +8,4 @@ export const formatSize = (bytes: number) => {
     } else {
         return `${(bytes / MB).toFixed(2)} MB`;
     }
-}
+};
