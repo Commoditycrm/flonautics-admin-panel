@@ -2461,7 +2461,7 @@ flatted@^3.2.9:
 
 "flonautics-project-types@git+https://github.com/Commoditycrm/flonautic-project-types.git":
   version "1.0.1"
-  resolved "git+https://github.com/Commoditycrm/flonautic-project-types.git#83341c719f1983a6ab3dc50ef77a1993b79d7313"
+  resolved "git+https://github.com/Commoditycrm/flonautic-project-types.git#cddca8d30f6db6658d2bcfa8acec756b34dfdf78"
   dependencies:
     graphql "^16.11.0"
 

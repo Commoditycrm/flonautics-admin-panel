@@ -81,10 +81,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
                   {orgDetail[0]?.name}{" "}
                 </span>
                 <span>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Repudiandae necessitatibus officiis quisquam autem! Sint
-                  quaerat vitae amet nulla autem! Ad autem sit incidunt ea,
-                  illo, sequi sint deserunt, veniam voluptate nulla ipsum!{" "}
+                  {orgDetail[0]?.description}
                 </span>
                 <span className="text-gray-400">
                   Created By {orgDetail[0]?.createdBy?.name} On{" "}

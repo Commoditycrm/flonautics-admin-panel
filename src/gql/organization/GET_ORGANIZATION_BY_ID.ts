@@ -8,6 +8,7 @@ export const GET_ORGANIZATION_BY_ID = gql`
       description
       createdAt
       deletedAt
+      estimatedSize
       createdBy {
         email
         name
