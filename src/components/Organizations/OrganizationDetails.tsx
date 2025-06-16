@@ -8,11 +8,10 @@ import Summary from "./Summary";
 import OrganizationUsers from "./OrganizationUsers";
 import OrganizationProjects from "./OrganizationProjects";
 import { Organization } from "flonautics-project-types";
+import { formatSize } from "@/src/data/helpers/formatSize";
 const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
   const [orgDetail, setOrgDetail] = useState<Organization[]>([]);
-  const [cards, setCards] = useState<
-    Array<{ title: string; description: number }>
-  >([]);
+  const [cards, setCards] = useState<Array<{ title: string; description: number }>>([]);
 
   const { data, loading, error } = useQuery(GET_ORGANIZATION_BY_ID, {
     variables: {
@@ -37,6 +36,10 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
         {
           title: "Total Projects",
           description: data?.organizations[0]?.projectsConnection?.totalCount,
+        },
+        {
+          title: "Total Storage Used",
+          description: formatSize(data?.organizations[0]?.estimatedSize),
         },
       ];
       setCards(cardsData);

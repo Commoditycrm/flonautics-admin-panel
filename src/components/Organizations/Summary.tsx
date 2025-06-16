@@ -8,7 +8,7 @@ import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
-  const [attatchmentStorage, setAttatchmentStorage] =
+ const [attatchmentStorage, setAttatchmentStorage] =
     useState<AttacthmentStorageType | null>(null);
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
     onError(error) {
@@ -158,9 +158,9 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           <Row gutter={20}>
             {cards?.map((card, index) => (
               <Col key={index} span={5}>
-                <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
+                <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-2">
                   <h2 className="text-[15px]">{card.title}</h2>
-                  <span className="text-gray-400">{card?.description}</span>
+                  <span className="text-gray-400 text-lg">{card?.description}</span>
                 </div>
               </Col>
             ))}
