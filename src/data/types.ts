@@ -22,7 +22,7 @@ export type ICustomButton = {
   disabled?: boolean;
   icon?: never;
   htmlType?: "button" | "submit" | "reset";
-  color?: string
+  color?: string;
 };
 
 export type ICustomTable = {
@@ -31,7 +31,7 @@ export type ICustomTable = {
   columns: TableColumnsType;
   loading?: boolean;
   rowKey: string;
-  onPageChange?: (config: TablePaginationConfig, filters: AnyObject) => void
+  onPageChange?: (config: TablePaginationConfig, filters: AnyObject) => void;
   totalCount?: number;
   currentPage?: number;
   className?: string;
@@ -43,9 +43,9 @@ export type ICustomTable = {
 };
 
 export type ISummary = {
-  orgDetail: Organization[]
-  cards: Array<{ title: string; description: number }>
-}
+  orgDetail: Organization[];
+  cards: Array<{ title: string; description: number }>;
+};
 
 export type IAlphabetAvatar = {
   name: string | undefined;
@@ -60,4 +60,10 @@ export type IConfirmModal = {
   description: string;
   onOk: () => void;
   loading?: boolean;
+};
+
+export type AttacthmentStorageType = {
+  fileCount: number;
+  totalBytes: number;
+  totalMB: number;
 };
