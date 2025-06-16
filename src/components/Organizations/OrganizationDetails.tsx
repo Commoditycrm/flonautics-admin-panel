@@ -22,6 +22,8 @@ const OrganizationDetails: React.FC<{ orgId: string }> = ({ orgId }) => {
     skip: !orgId,
   });
 
+ 
+
   useEffect(() => {
     if (data && data.organizations.length) {
       setOrgDetail(data?.organizations);

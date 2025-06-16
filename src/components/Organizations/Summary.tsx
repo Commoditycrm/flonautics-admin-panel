@@ -1,14 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { Col, Row, Space } from "antd";
 
-import { ISummary } from "@/src/data/types";
+import { AttacthmentStorageType, ISummary } from "@/src/data/types";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import CustomButton from "@/src/hoc/CustomButton/CustomButton";
 import { useMutation } from "@apollo/client";
 import { TOGGLE_ORG_STATUS } from "@/src/gql";
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
-
+ const [attatchmentStorage, setAttatchmentStorage] =
+    useState<AttacthmentStorageType | null>(null);
   const [toggleOrgStatus, { loading }] = useMutation(TOGGLE_ORG_STATUS, {
     onError(error) {
       console.error(error);
@@ -18,6 +19,25 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
         if (organizations[0]?.deletedAt) {
           const response = await fetch(
             "https://react-auth-flow.vercel.app/api/organizations/deactivate",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userEmail: orgDetail[0]?.createdBy?.email,
+                userName: orgDetail[0]?.createdBy?.name,
+                orgName: orgDetail[0]?.name,
+              }),
+            }
+          );
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error(errorData);
+          }
+        } else {
+          const response = await fetch(
+            "https://react-auth-flow.vercel.app/api/organizations/active",
             {
               method: "POST",
               headers: {
@@ -71,6 +91,34 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
     }
   };
 
+  const fetchAttachmentStorage = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `https://react-auth-flow.vercel.app/api/organizations/storage?orgId=${orgDetail[0].id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      setAttatchmentStorage(data);
+      if (!response.ok) {
+        const data = await response.json();
+        console.error(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [orgDetail]);
+
+  useEffect(() => {
+    if (orgDetail[0]?.id) {
+      fetchAttachmentStorage();
+    }
+  }, [fetchAttachmentStorage, orgDetail]);
+
   return (
     <div>
       <Row gutter={[0, 25]}>
@@ -81,9 +129,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
                 <span className="text-[17px] font-semibold">
                   {orgDetail[0]?.name}{" "}
                 </span>
-                <span>
-                  {orgDetail[0]?.description}
-                </span>
+                <span>{orgDetail[0]?.description}</span>
                 <span className="text-gray-400">
                   Created By {orgDetail[0]?.createdBy?.name} On{" "}
                   {displayDate(orgDetail[0]?.createdAt)}
@@ -118,6 +164,14 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
                 </div>
               </Col>
             ))}
+            <Col key={orgDetail[0]?.id} span={5}>
+              <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
+                <h2 className="text-[15px]">Attatchment Storage</h2>
+                <span className="text-gray-400">
+                  {attatchmentStorage?.totalMB} MB
+                </span>
+              </div>
+            </Col>
           </Row>
         </Col>
       </Row>
