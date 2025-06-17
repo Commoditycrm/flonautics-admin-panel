@@ -1,11 +1,11 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Col, Row, Space } from "antd";
 
 import { AttacthmentStorageType, ISummary } from "@/src/data/types";
 import { displayDate } from "@/src/data/helpers/displayDate";
 import CustomButton from "@/src/hoc/CustomButton/CustomButton";
-import { useMutation } from "@apollo/client";
-import { TOGGLE_ORG_STATUS } from "@/src/gql";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_FIREBASE_STORAGE, TOGGLE_ORG_STATUS } from "@/src/gql";
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
   const [attatchmentStorage, setAttatchmentStorage] =
@@ -61,6 +61,16 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
     },
   });
 
+  const { data, loading: getFirebaseStorageLoading } = useQuery(
+    GET_FIREBASE_STORAGE,
+    {
+      variables: {
+        orgId: orgDetail[0]?.id,
+      },
+      skip: !orgDetail[0]?.id,
+    }
+  );
+
   const handleUpdateOrgStatus = async () => {
     try {
       await toggleOrgStatus({
@@ -91,33 +101,11 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
     }
   };
 
-  const fetchAttachmentStorage = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `https://react-auth-flow.vercel.app/api/organizations/storage?orgId=${orgDetail[0].id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      setAttatchmentStorage(data);
-      if (!response.ok) {
-        const data = await response.json();
-        console.error(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, [orgDetail]);
-
   useEffect(() => {
-    if (orgDetail[0]?.id) {
-      fetchAttachmentStorage();
+    if (data) {
+      setAttatchmentStorage(data?.getFirebaseStorage);
     }
-  }, [fetchAttachmentStorage, orgDetail]);
+  }, [data]);
 
   return (
     <div>
@@ -168,13 +156,19 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
             ))}
             <Col key={orgDetail[0]?.id} span={5}>
               <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
-                <h2 className="text-[15px]">Attatchment Storage</h2>
-                <span className="text-gray-400">
-                  {attatchmentStorage?.totalMB
-                    ? attatchmentStorage?.totalMB
-                    : "_"}{" "}
-                  MB
-                </span>
+                {getFirebaseStorageLoading ? (
+                  <React.Fragment>
+                    <div className="h-5 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+                    <div className="h-5 bg-gray-100 rounded w-1/3 animate-pulse"></div>
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment>
+                    <h2 className="text-[15px]">Attatchment Storage</h2>
+                    <span className="text-gray-400">
+                      {attatchmentStorage?.totalMB} MB
+                    </span>
+                  </React.Fragment>
+                )}
               </div>
             </Col>
           </Row>
