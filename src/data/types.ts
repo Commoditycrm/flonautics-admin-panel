@@ -67,3 +67,14 @@ export type AttacthmentStorageType = {
   totalBytes: number;
   totalMB: number;
 };
+
+export type IFeaturecard = {
+  data: {[key: string]: string | string[]}
+}
+
+export type IAddAnnouncement = {
+  isOpen: boolean;
+  onClose: () => void;
+  onOk: () => void;
+  loading?: boolean;
+}
