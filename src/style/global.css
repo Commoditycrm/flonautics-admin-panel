@@ -66,3 +66,7 @@
     font-size: 15px;
     outline: none !important;
 }
+
+.ant-card .ant-card-body{
+    padding: 16px !important;
+}

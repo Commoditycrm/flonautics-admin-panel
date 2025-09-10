@@ -61,9 +61,9 @@ const Templates: React.FC = () => {
     },
     {
       title: "Total Backlogs",
-      dataIndex: "backlogItemConnection",
-      key: "backlogItemConnection",
-      render: (backlogItemConnection: { totalCount: number }) => backlogItemConnection?.totalCount,
+      dataIndex: "backlogItemsCount",
+      key: "backlogItemsCount",
+      render: (backlogItemsCount: number) => backlogItemsCount || 0,
     },
   ];
 
@@ -83,7 +83,7 @@ const Templates: React.FC = () => {
         columns={columns}
         rowKey="id"
         loading={loading}
-        onRowClick={() => { }}
+        onRowClick={() => {}}
         totalCount={totalCount}
       />
     </div>

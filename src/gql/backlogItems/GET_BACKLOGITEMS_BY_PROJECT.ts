@@ -10,7 +10,11 @@ export const GET_BACKLOGITEMS_BY_PROJECT = gql`
       id
       label
       uid
-      riskLevel
+      riskLevel {
+        id
+        name
+        color
+      }
       type {
         id
         name

@@ -21,6 +21,7 @@ const Sidebar = () => {
     const items: MenuItem[] = [
         { key: 'organizations', label: 'Organizations' },
         { key: 'templates', label: 'Templates' },
+        { key: 'announcements', label: 'Announcements' },
     ]
 
     const handleClick: MenuProps['onClick'] = (e) => {

@@ -11,9 +11,7 @@ export const GET_TEMPLATES = gql`
       name
       description
       createdAt
-      backlogItemConnection {
-        totalCount
-      }
+      backlogItemsCount
       createdBy {
         email
         name
