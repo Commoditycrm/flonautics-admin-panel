@@ -6,12 +6,11 @@ import {
   Observable,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-// import fetch from "cross-fetch";
 import { signOut } from "firebase/auth";
-import {firebaseAuth} from "./firebaseConfig";
+import { firebaseAuth } from "./firebaseConfig";
 import { getCookie, setCookie } from "./src/data/helpers/authCookies";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/graphql`;
 
 // --- Util: Clear all cookies ---
 const clearAllCookies = () => {
@@ -22,10 +21,8 @@ const clearAllCookies = () => {
   });
 };
 
-// --- HTTP Link ---
 const httpLink = new HttpLink({
   uri: API_URL,
-  // fetch,
 });
 
 const authLink = new ApolloLink((operation, forward) => {
