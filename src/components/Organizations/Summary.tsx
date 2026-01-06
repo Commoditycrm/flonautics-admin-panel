@@ -18,7 +18,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
       try {
         if (organizations[0]?.deletedAt) {
           const response = await fetch(
-            "https://react-auth-flow.vercel.app/api/organizations/deactivate",
+            `${process.env.NEXT_PUBLIC_API_URL}/api/organization/notification/deactive`,
             {
               method: "POST",
               headers: {
@@ -37,7 +37,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           }
         } else {
           const response = await fetch(
-            "https://react-auth-flow.vercel.app/api/organizations/active",
+            `${process.env.NEXT_PUBLIC_API_URL}/api/organizations/notification/active`,
             {
               method: "POST",
               headers: {
