@@ -18,7 +18,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
       try {
         if (organizations[0]?.deletedAt) {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/organization/notification/deactive`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/organization/notification/deactivate`,
             {
               method: "POST",
               headers: {
