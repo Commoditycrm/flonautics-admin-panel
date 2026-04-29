@@ -18,7 +18,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
       try {
         if (organizations[0]?.deletedAt) {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/organization/notification/deactive`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notification/organization/deactivate`,
             {
               method: "POST",
               headers: {
@@ -29,7 +29,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
                 userName: orgDetail[0]?.createdBy?.name,
                 orgName: orgDetail[0]?.name,
               }),
-            }
+            },
           );
           if (!response.ok) {
             const errorData = await response.json();
@@ -37,7 +37,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
           }
         } else {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/organizations/notification/active`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/notification/organization/active`,
             {
               method: "POST",
               headers: {
@@ -48,7 +48,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
                 userName: orgDetail[0]?.createdBy?.name,
                 orgName: orgDetail[0]?.name,
               }),
-            }
+            },
           );
           if (!response.ok) {
             const errorData = await response.json();
@@ -68,7 +68,7 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
         orgId: orgDetail[0]?.id,
       },
       skip: !orgDetail[0]?.id,
-    }
+    },
   );
 
   const handleUpdateOrgStatus = async () => {
