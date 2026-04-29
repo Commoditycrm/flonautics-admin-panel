@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  console.log("Running middleware for:", request.nextUrl.pathname); // log
+export function proxy(request: NextRequest) {
+  console.log("Running proxy for:", request.nextUrl.pathname); // log
   const token = request.cookies.get("accessToken")?.value;
   const pathname = request.nextUrl.pathname;
 
