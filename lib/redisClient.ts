@@ -1,7 +1,7 @@
 import Redis from "ioredis";
+import type { ProcessEnv } from "node";
 
 declare global {
-  // eslint-disable-next-line no-var
   var redisClient: Redis | undefined;
 }
 

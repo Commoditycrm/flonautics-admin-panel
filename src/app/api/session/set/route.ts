@@ -37,6 +37,8 @@ export async function POST(req: Request) {
       );
     }
 
+    // DecodedIdToken carries the standard claims plus an index signature for
+    // custom ones (roles, orgCreated, …), so we can pull them straight off.
     const {
       uid,
       email,
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
       orgCreated = false,
       name,
       phone_number,
-    } = decoded as Record<string, any>;
+    } = decoded;
 
     // backend only ever looks up the redis key, so a random id does the job
     // (no need for the Neo4j UserSession node the main app keeps around)
