@@ -9,7 +9,7 @@ import CustomInput from "../hoc/CustomInputs/CustomInput";
 import CustomButton from "../hoc/CustomButton/CustomButton";
 import { getInputRegex } from "../data/helpers/getInputRegex";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { setCookie } from "../data/helpers/authCookies";
+import { createSessionOnce } from "@/lib/createSessionOnce";
 
 const Login = () => {
   const [formValues, setFormValues] = useState({ email: "", password: "" })
@@ -30,12 +30,23 @@ const Login = () => {
       );
 
       const { user } = userCredential;
-      const idTokenResult = await user.getIdTokenResult();
-      const accessToken = idTokenResult.token;
-      setCookie("accessToken", accessToken, 2, "/", {
-        secure: true,
-        sameSite: "Strict",
-      });
+
+      // swap the firebase login for our backend session cookie
+      const sessionRes = await createSessionOnce(user);
+      if (!sessionRes.ok) {
+        const data = await sessionRes.json().catch(() => ({}));
+        form.setFields([
+          {
+            name: "password",
+            errors: [
+              data?.message ||
+                "Could not establish a session. Please try again.",
+            ],
+          },
+        ]);
+        return;
+      }
+
       router.push("/organizations");
     } catch (error: unknown) {
       if (error instanceof FirebaseError) {

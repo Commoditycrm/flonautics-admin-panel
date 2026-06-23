@@ -8,97 +8,81 @@ import {
 import { onError } from "@apollo/client/link/error";
 import { signOut } from "firebase/auth";
 import { firebaseAuth } from "./firebaseConfig";
-import { getCookie, setCookie } from "./src/data/helpers/authCookies";
+import { createSessionOnce } from "./lib/createSessionOnce";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/graphql`;
 
-// --- Util: Clear all cookies ---
-const clearAllCookies = () => {
-  document.cookie.split(";").forEach((c) => {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
-  });
-};
-
+// auth rides on the httpOnly `session` cookie (credentials: "include").
+// no Authorization header — the backend keeps that for invite tokens.
 const httpLink = new HttpLink({
   uri: API_URL,
+  credentials: "include",
 });
 
-const authLink = new ApolloLink((operation, forward) => {
-  const token = getCookie("accessToken");
-  operation.setContext(({ headers = {} }) => ({
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    },
-  }));
-  return forward(operation);
-});
+const goToLogin = () => {
+  if (typeof window !== "undefined") {
+    window.location.href = "/";
+  }
+};
 
 const errorLink = onError(
   ({ graphQLErrors, networkError, operation, forward }) => {
-    const tokenExpired = graphQLErrors?.some(
-      ({ message }) =>
-        message.includes("Token expired") || message.includes("Unknown user")
-    );
+    if (graphQLErrors?.length) {
+      const firstError = graphQLErrors[0];
+      const code = firstError?.extensions?.code as string | undefined;
 
-    if (tokenExpired) {
-      return new Observable((observer) => {
-        firebaseAuth.currentUser
-          ?.getIdToken(true)
-          .then((newToken) => {
-            setCookie("accessToken", newToken, 1, "/", {
-              secure: true,
-              sameSite: "Strict",
-            });
+      // backend rejected the session (expired / logged out / unknown user)
+      if (code === "UNAUTHENTICATED" || code === "ACCOUNT_DELETED") {
+        const alreadyRetried = operation.getContext().sessionRetried;
+        const user = firebaseAuth.currentUser;
 
-            operation.setContext(({ headers = {} }) => ({
-              headers: {
-                ...headers,
-                authorization: `Bearer ${newToken}`,
-              },
-            }));
-
-            forward(operation).subscribe(observer);
-          })
-          .catch((err) => {
-            console.error("Token refresh failed:", err);
-            observer.error(err);
+        // try once: refresh the session from firebase, then replay the query
+        if (!alreadyRetried && user && code === "UNAUTHENTICATED") {
+          return new Observable((observer) => {
+            createSessionOnce(user)
+              .then((res) => {
+                if (!res.ok) {
+                  throw new Error("Session refresh failed");
+                }
+                operation.setContext({ sessionRetried: true });
+                forward(operation).subscribe(observer);
+              })
+              .catch(async (err) => {
+                await signOut(firebaseAuth).catch(() => {});
+                goToLogin();
+                observer.error(err);
+              });
           });
+        }
+
+        // nothing to refresh with, or the refresh itself failed
+        signOut(firebaseAuth).catch(() => {});
+        goToLogin();
+        return;
+      }
+
+      // email not verified, so the backend won't hand out a session
+      if (code === "EMAIL_NOT_VERIFIED") {
+        signOut(firebaseAuth).catch(() => {});
+        goToLogin();
+        return;
+      }
+
+      graphQLErrors.forEach(({ message, path }) => {
+        console.warn(`[GraphQL error]: Message: ${message}, Path: ${path}`);
       });
-    }
-
-    const emailNotVerified = graphQLErrors?.some(({ message }) =>
-      message.includes("Please verify your email first.")
-    );
-
-    if (emailNotVerified) {
-      signOut(firebaseAuth)
-        .then(() => {
-          clearAllCookies();
-          window.location.href = "/login";
-        })
-        .catch((err) => {
-          console.error("Sign-out error:", err);
-        });
     }
 
     if (networkError) {
       console.error(`[Network error]: ${networkError}`);
     }
-    if (graphQLErrors && !tokenExpired && !emailNotVerified) {
-      graphQLErrors.forEach(({ message, path }) => {
-        console.warn(`[GraphQL error]: Message: ${message}, Path: ${path}`);
-      });
-    }
-  }
+  },
 );
 
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, authLink, httpLink]),
+  link: ApolloLink.from([errorLink, httpLink]),
   cache: new InMemoryCache(),
-  connectToDevTools: true,
+  connectToDevTools: process.env.NODE_ENV !== "production",
 });
 
 export default client;
