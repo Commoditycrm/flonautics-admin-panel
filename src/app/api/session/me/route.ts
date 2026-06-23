@@ -50,7 +50,7 @@ export async function GET() {
       );
     }
 
-    let parsedSession: Record<string, any>;
+    let parsedSession: Record<string, unknown>;
 
     try {
       parsedSession = JSON.parse(redisSession);
