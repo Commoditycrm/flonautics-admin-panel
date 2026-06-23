@@ -82,7 +82,7 @@ const errorLink = onError(
 const client = new ApolloClient({
   link: ApolloLink.from([errorLink, httpLink]),
   cache: new InMemoryCache(),
-  connectToDevTools: process.env.NODE_ENV !== "production",
+  devtools: { enabled: process.env.NODE_ENV !== "production" },
 });
 
 export default client;
