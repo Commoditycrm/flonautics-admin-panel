@@ -1,5 +1,4 @@
 import Redis from "ioredis";
-import type { ProcessEnv } from "node";
 
 declare global {
   var redisClient: Redis | undefined;
