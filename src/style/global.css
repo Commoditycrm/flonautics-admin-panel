@@ -98,3 +98,36 @@ body {
   outline-offset: 2px;
   border-radius: 6px;
 }
+
+/* Pointer cursor on every actionable element */
+button:not(:disabled),
+a[href],
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+summary,
+.ant-btn:not(.ant-btn-disabled),
+.ant-switch,
+.ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled),
+.ant-radio-wrapper:not(.ant-radio-wrapper-disabled),
+.ant-select:not(.ant-select-disabled) .ant-select-selector,
+.ant-picker:not(.ant-picker-disabled),
+.ant-tabs-tab,
+.ant-menu-item,
+.ant-menu-submenu-title,
+.ant-pagination-item,
+.ant-pagination-item-link,
+.ant-dropdown-menu-item,
+.ant-table-column-has-sorters,
+.ant-table-filter-trigger,
+.ant-modal-close,
+.ant-tag-checkable {
+  cursor: pointer;
+}
+
+/* Disabled affordances */
+button:disabled,
+[aria-disabled="true"],
+.ant-btn-disabled,
+.ant-btn[disabled] {
+  cursor: not-allowed;
+}
