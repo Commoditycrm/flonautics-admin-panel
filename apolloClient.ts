@@ -10,12 +10,11 @@ import { signOut } from "firebase/auth";
 import { firebaseAuth } from "./firebaseConfig";
 import { createSessionOnce } from "./lib/createSessionOnce";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/graphql`;
-
-// auth rides on the httpOnly `session` cookie (credentials: "include").
-// no Authorization header — the backend keeps that for invite tokens.
+// Hit our own same-origin proxy (/api/gql) instead of the backend directly, so
+// the httpOnly `session` cookie is included (it's host-only to this domain) and
+// forwarded server-side. credentials:"include" makes the browser send it along.
 const httpLink = new HttpLink({
-  uri: API_URL,
+  uri: "/api/gql",
   credentials: "include",
 });
 
