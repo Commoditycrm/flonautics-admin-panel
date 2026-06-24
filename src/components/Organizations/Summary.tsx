@@ -1,11 +1,23 @@
 import React, { FC, useEffect, useState } from "react";
-import { Col, Row, Space } from "antd";
+import { Button } from "antd";
+import {
+  TeamOutlined,
+  ProjectOutlined,
+  DatabaseOutlined,
+  PaperClipOutlined,
+} from "@ant-design/icons";
 
 import { AttacthmentStorageType, ISummary } from "@/src/data/types";
-import { displayDate } from "@/src/data/helpers/displayDate";
-import CustomButton from "@/src/hoc/CustomButton/CustomButton";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_FIREBASE_STORAGE, TOGGLE_ORG_STATUS } from "@/src/gql";
+import StatusTag from "@/src/components/ui/StatusTag";
+import StatCard from "@/src/components/ui/StatCard";
+
+const iconFor = (title: string) => {
+  if (title.includes("User")) return <TeamOutlined />;
+  if (title.includes("Project")) return <ProjectOutlined />;
+  return <DatabaseOutlined />;
+};
 
 const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
   const [attatchmentStorage, setAttatchmentStorage] =
@@ -107,73 +119,48 @@ const Summary: FC<ISummary> = ({ orgDetail, cards }) => {
     }
   }, [data]);
 
+  const isActive = orgDetail[0]?.deletedAt === null;
+
   return (
-    <div>
-      <Row gutter={[0, 25]}>
-        <Col span={24}>
-          <Row justify="space-between">
-            <Col span={20}>
-              <Space direction="vertical" size={5}>
-                <span className="text-[17px] font-semibold">
-                  {orgDetail[0]?.name}{" "}
-                </span>
-                <span>{orgDetail[0]?.description}</span>
-                <span className="text-gray-400">
-                  Created By {orgDetail[0]?.createdBy?.name} On{" "}
-                  {displayDate(orgDetail[0]?.createdAt)}
-                </span>
-              </Space>
-            </Col>
+    <div className="space-y-5">
+      {/* Status control */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-border bg-surface p-4 shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-ink">
+            Organization status
+          </span>
+          <StatusTag active={isActive} />
+        </div>
+        <Button
+          type="primary"
+          danger={isActive}
+          onClick={handleUpdateOrgStatus}
+          disabled={loading}
+          loading={loading}
+        >
+          {isActive ? "Deactivate organization" : "Activate organization"}
+        </Button>
+      </div>
 
-            <Col span={2}>
-              <Space>
-                <CustomButton
-                  value={
-                    orgDetail[0]?.deletedAt === null ? "Deactivate" : "Activate"
-                  }
-                  type={"primary"}
-                  onClick={handleUpdateOrgStatus}
-                  color={orgDetail[0]?.deletedAt === null ? "red" : ""}
-                  disabled={loading}
-                  loading={loading}
-                />
-              </Space>
-            </Col>
-          </Row>
-        </Col>
-
-        <Col span={24}>
-          <Row gutter={20}>
-            {cards?.map((card, index) => (
-              <Col key={index} span={5}>
-                <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-2">
-                  <h2 className="text-[15px]">{card.title}</h2>
-                  <span className="text-gray-400 text-lg">
-                    {card?.description}
-                  </span>
-                </div>
-              </Col>
-            ))}
-            <Col key={orgDetail[0]?.id} span={5}>
-              <div className="bg-white shadow-md rounded-md p-4 border border-gray-100 flex flex-col gap-3">
-                {getFirebaseStorageLoading ? (
-                  <React.Fragment>
-                    <div className="h-5 bg-gray-200 rounded w-1/2 animate-pulse"></div>
-                    <div className="h-5 bg-gray-100 rounded w-1/3 animate-pulse"></div>
-                  </React.Fragment>
-                ) : (
-                  <React.Fragment>
-                    <h2 className="text-[15px]">Attatchment Storage</h2>
-                    <span className="text-gray-400">
-                      {attatchmentStorage?.totalMB} MB
-                    </span>
-                  </React.Fragment>
-                )}
-              </div>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+      {/* Metrics */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {cards?.map((card, index) => (
+          <StatCard
+            key={card.title}
+            label={card.title}
+            value={card.description}
+            icon={iconFor(card.title)}
+            index={index}
+          />
+        ))}
+        <StatCard
+          label="Attachment Storage"
+          value={`${attatchmentStorage?.totalMB ?? 0} MB`}
+          icon={<PaperClipOutlined />}
+          loading={getFirebaseStorageLoading}
+          index={cards?.length ?? 3}
+        />
+      </div>
     </div>
   );
 };

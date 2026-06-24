@@ -44,7 +44,7 @@ export type ICustomTable = {
 
 export type ISummary = {
   orgDetail: Organization[];
-  cards: Array<{ title: string; description: number }>;
+  cards: Array<{ title: string; description: number | string }>;
 };
 
 export type IAlphabetAvatar = {

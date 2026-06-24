@@ -1,29 +1,28 @@
 "use client";
-import client from "@/apolloClient";
-import Navbar from "@/src/components/Navbar";
-import Sidebar from "@/src/components/Sidebar";
+
 import { ApolloProvider } from "@apollo/client";
-import { Layout } from "antd";
+import client from "@/apolloClient";
+import Sidebar from "@/src/components/Sidebar";
+import Topbar from "@/src/components/Topbar";
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { Header, Sider, Content } = Layout;
   return (
     <ApolloProvider client={client}>
-      <Layout className="h-[100vh] overflow-hidden">
-        <Header className="h-[7.5vh]">
-          <Navbar />
-        </Header>
-        <Layout>
-          <Sider width={240}>
-            <Sidebar />
-          </Sider>
-          <Content className="px-[22px] py-[16px] h-[92.5vh] overflow-auto">{children}</Content>
-        </Layout>
-      </Layout>
+      <div className="flex h-screen overflow-hidden bg-bg">
+        <Sidebar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <Topbar />
+          <main className="flex-1 overflow-auto">
+            <div className="mx-auto w-full max-w-[1280px] px-6 py-7">
+              {children}
+            </div>
+          </main>
+        </div>
+      </div>
     </ApolloProvider>
   );
 }

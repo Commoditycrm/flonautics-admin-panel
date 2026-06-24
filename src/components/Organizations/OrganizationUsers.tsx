@@ -7,8 +7,25 @@ import { useQuery } from "@apollo/client";
 import { useColumnSearch } from "@/src/data/helpers/getColumnSearch";
 import { GET_MEMBERS_IN_ORG } from "@/src/gql";
 import { SortDirection, User } from "flonautics-project-types";
+import Surface from "@/src/components/ui/Surface";
+import EmptyState from "@/src/components/ui/EmptyState";
+import TableSkeleton from "@/src/components/ui/TableSkeleton";
 
 const { Text } = Typography;
+
+const RoleTag = ({ role }: { role?: string }) => {
+  if (!role) return <span className="text-muted">—</span>;
+  const strong = /admin|owner/i.test(role);
+  return (
+    <span
+      className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium capitalize ${
+        strong ? "bg-brand-soft text-brand" : "bg-[#f4f4f5] text-ink-soft"
+      }`}
+    >
+      {role.toLowerCase()}
+    </span>
+  );
+};
 
 const OrganizationUsers: React.FC<{ orgId: string }> = ({ orgId }) => {
   const [dataSource, setDataDource] = useState<User[]>([]);
@@ -56,9 +73,9 @@ const OrganizationUsers: React.FC<{ orgId: string }> = ({ orgId }) => {
       dataIndex: "name",
       key: "name",
       render: (name: string) => (
-        <Space size={5}>
+        <Space size={10}>
           <AlphabetAvatar name={name} size={34} />
-          <Text className="text-md">{name}</Text>
+          <Text className="font-medium !text-ink">{name}</Text>
         </Space>
       ),
       ...getColumnSearchProps("name"),
@@ -67,12 +84,14 @@ const OrganizationUsers: React.FC<{ orgId: string }> = ({ orgId }) => {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      render: (email: string) => <span className="text-ink-soft">{email}</span>,
       ...getColumnSearchProps("email"),
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
+      render: (role: string) => <RoleTag role={role} />,
     },
   ];
 
@@ -100,18 +119,30 @@ const OrganizationUsers: React.FC<{ orgId: string }> = ({ orgId }) => {
     }
   };
 
+  const showSkeleton = loading && dataSource.length === 0;
+  const showEmpty = !loading && dataSource.length === 0;
+
   return (
-    <div>
-      <CustomTable
-        dataSource={dataSource}
-        columns={columns}
-        rowKey={"id"}
-        onRowClick={() => {}}
-        loading={loading || isFetchingMore}
-        totalCount={totalCount}
-        onPageChange={handleTableChange}
-      />
-    </div>
+    <Surface>
+      {showSkeleton ? (
+        <TableSkeleton cols={3} />
+      ) : showEmpty ? (
+        <EmptyState
+          title="No members yet"
+          description="Users who join this organization will appear here."
+        />
+      ) : (
+        <CustomTable
+          dataSource={dataSource}
+          columns={columns}
+          rowKey={"id"}
+          onRowClick={() => {}}
+          loading={loading || isFetchingMore}
+          totalCount={totalCount}
+          onPageChange={handleTableChange}
+        />
+      )}
+    </Surface>
   );
 };
 

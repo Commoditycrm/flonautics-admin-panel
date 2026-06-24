@@ -1,6 +1,6 @@
-import { ICustomTable } from '@/src/data/types'
-import { Table } from 'antd'
-import React, { FC } from 'react'
+import { ICustomTable } from "@/src/data/types";
+import { Table } from "antd";
+import React, { FC } from "react";
 
 const CustomTable: FC<ICustomTable> = ({
   className,
@@ -12,9 +12,8 @@ const CustomTable: FC<ICustomTable> = ({
   totalCount,
   rowKey,
   onRowClick,
-  onPageChange
+  onPageChange,
 }) => {
-
   return (
     <Table
       showSorterTooltip={false}
@@ -24,17 +23,21 @@ const CustomTable: FC<ICustomTable> = ({
       columns={columns}
       dataSource={dataSource}
       pagination={{
-        simple: true,
         showSizeChanger: false,
         pageSize: pageSize,
         total: totalCount,
-        size: "small",
+        hideOnSinglePage: true,
+        showTotal: (total, range) =>
+          `${range[0]}–${range[1]} of ${total}`,
       }}
       onChange={onPageChange}
-      onRow={(record) => ({ onClick: () => onRowClick(record) })}
+      onRow={(record) => ({
+        onClick: () => onRowClick(record),
+        className: "cursor-pointer",
+      })}
       {...(scroll && { scroll: { x: "max-content" } })}
     />
-  )
-}
+  );
+};
 
-export default CustomTable
+export default CustomTable;

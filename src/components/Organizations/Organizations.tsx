@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Col, Row, TablePaginationConfig } from "antd";
+import { TablePaginationConfig, Tooltip } from "antd";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
+import { motion } from "framer-motion";
+import { DeleteOutlined } from "@ant-design/icons";
 
 import CustomTable from "@/src/hoc/CustomTable/CustomTable";
 import { DELETE_ORG, GET_ORGANIZATIONS } from "@/src/gql";
@@ -15,8 +17,20 @@ import {
   SortDirection,
   User,
 } from "flonautics-project-types";
-import { DeleteOutlined } from "@ant-design/icons";
 import ConfirmModal from "@/src/hoc/ConfirmModal";
+import PageHeader from "@/src/components/ui/PageHeader";
+import Surface from "@/src/components/ui/Surface";
+import StatusTag from "@/src/components/ui/StatusTag";
+import EmptyState from "@/src/components/ui/EmptyState";
+import ErrorState from "@/src/components/ui/ErrorState";
+import TableSkeleton from "@/src/components/ui/TableSkeleton";
+
+const CountChip = ({ value }: { value: number }) => (
+  <span className="inline-flex min-w-[28px] justify-center rounded-md bg-[#f4f4f5] px-2 py-0.5 text-xs font-medium text-ink-soft">
+    {value ?? 0}
+  </span>
+);
+
 const Organizations = () => {
   const router = useRouter();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -27,22 +41,18 @@ const Organizations = () => {
 
   const { getColumnSearchProps } = useColumnSearch();
 
-  const { data, error, loading, fetchMore } = useQuery(GET_ORGANIZATIONS, {
-    variables: {
-      options: {
-        limit: 10,
-        offset: 0,
-        sort: [
-          {
-            lastModified: SortDirection.Desc,
-          },
-          // {
-          //   createdAt: "DESC",
-          // },
-        ],
+  const { data, error, loading, fetchMore, refetch } = useQuery(
+    GET_ORGANIZATIONS,
+    {
+      variables: {
+        options: {
+          limit: 10,
+          offset: 0,
+          sort: [{ lastModified: SortDirection.Desc }],
+        },
       },
-    },
-  });
+    }
+  );
 
   const [deleteOrg, { loading: deleteOrgLoading }] = useMutation(DELETE_ORG, {
     async onCompleted() {
@@ -76,6 +86,7 @@ const Organizations = () => {
       console.error(error);
     },
   });
+
   const handleDeleteOrg = async () => {
     try {
       await deleteOrg({
@@ -115,64 +126,74 @@ const Organizations = () => {
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
+      render: (name: string) => (
+        <div className="flex items-center gap-3">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-xs font-semibold text-brand">
+            {(name || "?").charAt(0).toUpperCase()}
+          </span>
+          <span className="font-medium text-ink">{name}</span>
+        </div>
+      ),
     },
     {
       title: "Created By",
       dataIndex: "createdBy",
       key: "createdBy",
-      render: (createdBy: User) => createdBy?.name,
+      render: (createdBy: User) => (
+        <span className="text-ink-soft">{createdBy?.name}</span>
+      ),
       ...getColumnSearchProps("createdBy.name"),
     },
     {
       title: "Created On",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (createdAt: string) => displayDate(createdAt),
+      render: (createdAt: string) => (
+        <span className="text-ink-soft">{displayDate(createdAt)}</span>
+      ),
     },
     {
       title: "Last Updated",
       dataIndex: "lastModified",
       key: "lastModified",
-      render: (lastModified: string) =>
-        lastModified ? displayDate(lastModified) : "-",
+      render: (lastModified: string) => (
+        <span className="text-ink-soft">
+          {lastModified ? displayDate(lastModified) : "-"}
+        </span>
+      ),
     },
     {
       title: "Users",
       dataIndex: "memberUsersConnection",
       key: "memberUsersConnection",
-      render: (memberUsersConnection: OrganizationMemberUsersConnection) =>
-        memberUsersConnection?.totalCount,
+      render: (memberUsersConnection: OrganizationMemberUsersConnection) => (
+        <CountChip value={memberUsersConnection?.totalCount} />
+      ),
     },
     {
       title: "Projects",
       dataIndex: "projectsConnection",
       key: "projectsConnection",
-      render: (projectsConnection: OrganizationProjectsConnection) =>
-        projectsConnection?.totalCount,
+      render: (projectsConnection: OrganizationProjectsConnection) => (
+        <CountChip value={projectsConnection?.totalCount} />
+      ),
     },
     {
       title: "Status",
       dataIndex: "deletedAt",
       key: "deletedAt",
-      render: (deletedAt: string) =>
-        deletedAt === null ? (
-          <span className="text-green-600">Active</span>
-        ) : (
-          <span className="text-red-600">Inactive</span>
-        ),
+      render: (deletedAt: string) => <StatusTag active={deletedAt === null} />,
     },
     {
       title: "",
       dataIndex: "id",
       key: "deleteOrg",
-      render: (_: string, record: Organization) => {
-        return (
-          <DeleteOutlined
-            color="red"
-            className="hover:text-red-400"
-            style={{
-              color: "red",
-            }}
+      width: 56,
+      render: (_: string, record: Organization) => (
+        <Tooltip title="Delete organization">
+          <button
+            aria-label="Delete organization"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-[#fdeceb] hover:text-[#e5484d]"
             onClick={(event) => {
               event.stopPropagation();
               if (record?.id) {
@@ -180,9 +201,11 @@ const Organizations = () => {
                 setShowModal(true);
               }
             }}
-          />
-        );
-      },
+          >
+            <DeleteOutlined />
+          </button>
+        </Tooltip>
+      ),
     },
   ];
 
@@ -197,14 +220,7 @@ const Organizations = () => {
           options: {
             limit: pageSize,
             offset,
-            sort: [
-              {
-                lastModified: "DESC",
-              },
-              // {
-              //   createdAt: "DESC",
-              // },
-            ],
+            sort: [{ lastModified: "DESC" }],
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
@@ -217,17 +233,42 @@ const Organizations = () => {
     }
   };
 
-  if (error) return <p>{error.message} </p>;
+  const showSkeleton = loading && organizations.length === 0;
+  const showEmpty = !loading && !error && organizations.length === 0;
 
   return (
-    <div>
-      <Row>
-        <Col span={24}>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      <PageHeader
+        title="Organizations"
+        description="Manage every workspace, its members, and projects."
+        badge={
+          totalCount > 0 ? (
+            <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+              {totalCount}
+            </span>
+          ) : null
+        }
+      />
+
+      <Surface>
+        {error ? (
+          <ErrorState message={error.message} onRetry={() => refetch()} />
+        ) : showSkeleton ? (
+          <TableSkeleton cols={7} />
+        ) : showEmpty ? (
+          <EmptyState
+            title="No organizations yet"
+            description="Organizations created by your users will appear here."
+          />
+        ) : (
           <CustomTable
             loading={loading || isFetchingMore}
             dataSource={organizations}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
+            // @ts-expect-error column render types are wider than AnyObject
             columns={columns}
             rowKey={"id"}
             pageSize={10}
@@ -235,8 +276,9 @@ const Organizations = () => {
             onRowClick={(record) => router.push(`/organizations/${record.id}`)}
             onPageChange={handleTableChange}
           />
-        </Col>
-      </Row>
+        )}
+      </Surface>
+
       <ConfirmModal
         isOpen={showModal}
         description="Are you sure you want to delete this organization? This action is irreversible and will permanently remove all associated data."
@@ -245,7 +287,7 @@ const Organizations = () => {
         title="Delete Organization"
         loading={deleteOrgLoading}
       />
-    </div>
+    </motion.div>
   );
 };
 

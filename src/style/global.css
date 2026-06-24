@@ -1,72 +1,100 @@
 @import "tailwindcss";
 
-.ant-layout-header {
-    background-color: white !important;
-    padding: 0px !important;
-    border-bottom: 1px solid rgb(233, 233, 233);
+/* Shared design tokens — mirror the AntD theme so Tailwind utilities match. */
+@theme {
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-border: #e8e8ec;
+  --color-border-soft: #f0f0f3;
+  --color-ink: #18181b;
+  --color-ink-soft: #52525b;
+  --color-muted: #a1a1aa;
+  --color-brand: #5b57e0;
+  --color-brand-soft: #eeeefb;
+
+  --radius-card: 14px;
+
+  --shadow-soft: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-pop: 0 8px 24px rgba(16, 24, 40, 0.08), 0 2px 6px rgba(16, 24, 40, 0.04);
 }
 
-.ant-layout-content {
-    background-color: white !important;
+:root {
+  color-scheme: light;
 }
 
-.ant-layout-sider {
-    background-color: white !important;
+html,
+body {
+  height: 100%;
 }
 
-.ant-menu-inline .ant-menu-item {
-    height: 34px !important;
-    padding-left: 16px !important;
-    border-radius: 4px !important;
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.ant-menu-light.ant-menu-root.ant-menu-inline {
-    border-inline-end: 1px solid rgb(233, 233, 233);
+::selection {
+  background: rgba(91, 87, 224, 0.18);
 }
 
-.ant-menu-light {
-    height: 100% !important;
+/* Refined scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #b4b4bb;
+  background-clip: content-box;
 }
 
-/* Table */
+/* ---- AntD refinements (most styling is handled by theme tokens) ---- */
+
+/* Table: airy header, hairline rows */
+.ant-table-wrapper .ant-table {
+  background: transparent;
+}
+.ant-table-wrapper .ant-table-thead > tr > th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--color-border-soft);
+}
 .ant-table-measure-row {
-    display: none !important;
+  display: none !important;
 }
 
-.ant-table-wrapper .ant-table-thead>tr>th {
-    font-size: 14px;
-    padding: 10px 8px;
-    background-color: white;
-    border-radius: 0px !important;
+/* Menu: borderless inside our padded sidebar */
+.ant-menu-light.ant-menu-root.ant-menu-inline {
+  border-inline-end: none;
+}
+.ant-menu-inline {
+  font-weight: 500;
 }
 
-.ant-table-wrapper .ant-table-tbody>tr>td {
-    font-size: 14px;
-    padding: 0px 8px;
-    height: 50px !important;
-    cursor: pointer;
-}
-
-.ant-pagination-simple-pager input {
-    pointer-events: none;
-    cursor: not-allowed;
-}
-
+/* Tighten dividers inside popovers */
 .ant-divider-horizontal {
-    margin: 0px !important;
+  margin: 8px 0;
 }
 
-/* Tabs */
-.ant-tabs {
-    height: 100%;
-}
-
-.ant-tabs .ant-tabs-tab {
-    padding: 6px 0px;
-    font-size: 15px;
-    outline: none !important;
-}
-
-.ant-card .ant-card-body{
-    padding: 16px !important;
+/* Keyboard focus ring */
+:where(a, button):focus-visible {
+  outline: 2px solid rgba(91, 87, 224, 0.5);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
